@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS ingredients
+(
+    id    BIGSERIAL PRIMARY KEY ,
+    name  VARCHAR(200) NOT NULL ,
+    property VARCHAR(254) NOT NULL
+);

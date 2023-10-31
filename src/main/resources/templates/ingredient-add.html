@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header :: links">
+</head>
+<header th:insert="header :: header"></header>
+<body class="container mt-5 mb-5">
+<p>Добавить ингредиент:</h1>
+<form action="/ingredient/add" method="post" class="form-group mt-2 mb-2">
+    <input type="text" name="name" placeholder="Введите название ингредиента" class="form-control border mt-2 mb-2 col-md-6">
+    <input type="text" name="property" placeholder="Введите свойство ингредиента"  class="form-control border mt-2 mb-2 col-md-6">
+    <button type="submit" class="btn btn-success">Добавить ингредиент</button>
+</form>
+</body>
+</html>
