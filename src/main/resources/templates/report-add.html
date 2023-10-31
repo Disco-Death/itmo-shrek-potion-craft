@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header :: links">
+</head>
+<header th:insert="header :: header"></header>
+<body class="container mt-5 mb-5">
+<p>Создать отчет:</p>
+<form action="/report/add" method="post" class="form-group mt-2 mb-2">
+  <input type="text" name="title" placeholder="Введите заголовок..."  class="form-control border mt-2 mb-2 col-md-6">
+  <input type="text" name="subject" placeholder="Введите тему..."  class="form-control border mt-2 mb-2 col-md-6">
+  <textarea name="body" placeholder="Введите отчет..."  class="form-control border mt-2 mb-2 col-md-6"></textarea>
+  <button type="submit" class="btn btn-success">Создать отчет</button>
+</form>
+</body>
+</html>
