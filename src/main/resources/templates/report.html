@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header :: links">
+</head>
+<header th:insert="header :: header"></header>
+<body class="container mt-5 mb-5">
+<h1>Отчеты:</h1>
+<div th:each="el : ${reports}" class="row align-items-start border border-success mt-2 mb-2">
+  <div th:text="${el.id}"  class="col border "/>
+  <div th:text="${el.title}"  class="col border "/>
+  <div th:text="${el.subject}"  class="col border "/>
+  <div class="col">
+    <a th:if="${el.isSended == true}" th:href="'/report/' + ${el.id}"  class="btn btn-success">Смотреть отчет</a>
+    <form th:if="${el.isSended == false}" th:action="'/report/send/' + ${el.id}" method="post" class="col">
+      <button type="submit"  class="btn btn-warning">Отправить отчет</button>
+    </form>
+  </div>
+  <div class="col"><a th:if="${el.isSended == false}" th:href="'/report/edit/' + ${el.id}"  class="btn btn-warning">Редактировать</a></div>
+  <form th:action="'/report/delete/' + ${el.id}" method="post" class="col">
+    <button  th:if="${el.isSended == false}" type="submit"  class="btn btn-danger">Удалить</button>
+  </form>
+</div>
+<div><a href="report/add" class="btn btn-success">Создать отчет</a></div>
+</body>
+</html>
