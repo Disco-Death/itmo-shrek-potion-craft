@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head th:insert="header :: links">
+</head>
+<body>
+    <div class="alert alert-danger text-center" role="alert" th:if="${message}" th:text="${message}"/>
+    <div class="row login-container">
+        <div class="col-md-2 mx-auto">
+            <form th:action="@{/registration}" method="post">
+                <div class="form-outline mb-4"><input type="text" class="form-control" placeholder="User Name" name="username"/></div>
+                <div class="form-outline mb-4"><input type="password" class="form-control" placeholder="Password" name="password"/></div>
+                <div class="col mx-auto"><input class="btn btn-success col-md-12 btn-block mb-4" type="submit" value="Register"/></div>
+            </form>
+            <a href="/login" class="link-dark">Login</a>
+        </div>
+    </div>
+</body>
+</html>
