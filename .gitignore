@@ -35,4 +35,6 @@ build/
 #DB
 /src/main/resources/application.properties
 src/main/resources/application.properties
-src/main/resources/application.properties
+
+# MVN
+/.mvn/
