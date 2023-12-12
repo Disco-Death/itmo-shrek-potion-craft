@@ -9,6 +9,7 @@
     <input  th:value="${report.title}" type="text" name="title" placeholder="Введите заголовок..." class="form-control border mt-2 mb-2 col-md-6">
     <input  th:value="${report.subject}" type="text" name="subject" placeholder="Введите тему..." class="form-control border mt-2 mb-2 col-md-6">
     <textarea th:text="${report.body}" name="body" placeholder="Введите отчет..." class="form-control border mt-2 mb-2 col-md-6"/>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <button type="submit" class="btn btn-success">Обновить отчет</button>
 </form>
 </body>
