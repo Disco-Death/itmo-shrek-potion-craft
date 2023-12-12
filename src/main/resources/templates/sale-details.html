@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:insert="~{header :: links}"></head>
+    <header th:insert="~{header :: header}"></header>
+    <body class="container mt-5 mb-5">
+        <div>
+            <div th:text="${sale.id}"></div>
+            <div th:text="${sale.potionId}"></div>
+            <div th:text="${sale.quantity}"></div>
+            <div th:text="${sale.price}"></div>
+            <div th:text="${sale.client}"></div>
+        </div>
+    </body>
+</html>
