@@ -1,6 +1,8 @@
 package com.potion.ISPotion.Controllers;
 
+import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.Sale;
+import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SaleController {
     @Autowired
     private SaleRepository saleRepository;
+    @Autowired
+    private PotionRepository potionRepository;
 
     @GetMapping("/sale")
     public String sale(Model model) {
         Iterable<Sale> sales = saleRepository.findAll();
+
         model.addAttribute("title", "Продажи");
         model.addAttribute("sales", sales);
 
@@ -27,6 +32,7 @@ public class SaleController {
     @GetMapping("/sale/{id}")
     public String saleDisplay(@PathVariable(value = "id") long id, Model model) {
         Sale sale = saleRepository.findById(id).orElseThrow();
+
         model.addAttribute("title", "Продажа");
         model.addAttribute("sale", sale);
 
@@ -35,7 +41,11 @@ public class SaleController {
 
     @GetMapping("/sale/add")
     public String saleAddDisplay(Model model) {
+        Iterable<Potion> potions = potionRepository.findAll();
+
         model.addAttribute("title", "Добавить продажу");
+        model.addAttribute("potions", potions);
+
         return "sale-add";
     }
 
@@ -45,7 +55,12 @@ public class SaleController {
                           @RequestParam Long price,
                           @RequestParam String client,
                           Model model) {
-        Sale sale = new Sale(potionId, quantity, price, client);
+        if (!potionRepository.existsById(potionId)) {
+            return "redirect:/sale";
+        }
+
+        Potion potion = potionRepository.findById(potionId).orElseThrow();
+        Sale sale = new Sale(potion, quantity, price, client);
         saleRepository.save(sale);
 
         return "redirect:/sale";
@@ -58,8 +73,11 @@ public class SaleController {
         }
 
         Sale sale = saleRepository.findById(id).orElseThrow();
+        Iterable<Potion> potions = potionRepository.findAll();
+
         model.addAttribute("title", "Изменить продажу");
         model.addAttribute("sale", sale );
+        model.addAttribute("potions", potions);
 
         return "sale-edit";
     }
@@ -74,9 +92,14 @@ public class SaleController {
         if (!saleRepository.existsById(id)) {
             return "redirect:/sale";
         }
+        if (!potionRepository.existsById(potionId)) {
+            return "redirect:/sale";
+        }
 
+        Potion potion = potionRepository.findById(potionId).orElseThrow();
         Sale sale = saleRepository.findById(id).orElseThrow();
-        sale.setPotionId(potionId);
+
+        sale.setPotion(potion);
         sale.setQuantity(quantity);
         sale.setPrice(price);
         sale.setClient(client);
@@ -87,9 +110,11 @@ public class SaleController {
 
     @PostMapping("/sale/delete/{id}")
     public String saleDelete(@PathVariable(value = "id") long id) {
-        if (saleRepository.existsById(id)) {
-            saleRepository.deleteById(id);
+        if (!saleRepository.existsById(id)) {
+            return "redirect:/sale";
         }
+        saleRepository.deleteById(id);
+
         return "redirect:/sale";
     }
 }

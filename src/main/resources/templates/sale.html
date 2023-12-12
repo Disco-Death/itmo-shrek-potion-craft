@@ -5,14 +5,14 @@
     <body class="container mt-5 mb-5">
         <h1>Продажи:</h1>
         <div>
-            <div th:each="el : ${sales}" class="row align-items-start border border-success mt-2 mb-2">
-                <div th:text="${el.id}" class="col border "/>
-                <div th:text="${el.potionId}"  class="col border "/>
-                <div th:text="${el.quantity}"  class="col border "/>
-                <div th:text="${el.price}"  class="col border "/>
-                <div th:text="${el.client}"  class="col border "/>
-                <div class="col"><a th:href="'/sale/edit/' + ${el.id}" class="btn btn-warning">Редактировать</a></div>
-                <form th:action="'/sale/delete/' + ${el.id}" class="col" method="post">
+            <div th:each="sale : ${sales}" class="row align-items-start border border-success mt-2 mb-2">
+                <div th:text="${sale.id}" class="col border "/>
+                <div th:text="${sale.potion.name}"  class="col border "/>
+                <div th:text="${sale.quantity}"  class="col border "/>
+                <div th:text="${sale.price}"  class="col border "/>
+                <div th:text="${sale.client}"  class="col border "/>
+                <div class="col"><a th:href="'/sale/edit/' + ${sale.id}" class="btn btn-warning">Редактировать</a></div>
+                <form th:action="'/sale/delete/' + ${sale.id}" class="col" method="post">
                     <button type="submit" class="btn btn-danger">Удалить</button>
                 </form>
             </div>

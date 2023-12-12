@@ -9,19 +9,21 @@ public class Sale {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long potionId;
+    @ManyToOne
+    @JoinColumn(name="potion_id")
+    private Potion potion;
 
     private Long quantity;
 
     private Long price;
 
-    @Column(length = 512)
+    @Column(length = 512, nullable = false)
     private String client;
 
     public Sale() { }
 
-    public Sale(Long potionId, Long quantity, Long price, String client) {
-        this.potionId = potionId;
+    public Sale(Potion potion, Long quantity, Long price, String client) {
+        this.potion = potion;
         this.quantity = quantity;
         this.price = price;
         this.client = client;
@@ -35,12 +37,12 @@ public class Sale {
         this.id = id;
     }
 
-    public Long getPotionId() {
-        return potionId;
+    public Potion getPotion() {
+        return potion;
     }
 
-    public void setPotionId(Long potionId) {
-        this.potionId = potionId;
+    public void setPotion(Potion potion) {
+        this.potion = potion;
     }
 
     public Long getQuantity() {

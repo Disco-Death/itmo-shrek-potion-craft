@@ -5,6 +5,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Potion {
@@ -13,6 +14,9 @@ public class Potion {
     private Long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "potion")
+    private List<Sale> sales;
 
     public ArrayList<Long> getIngredientsIds() {
         return ingredientsIds;
