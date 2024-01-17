@@ -1,13 +1,30 @@
 package com.potion.ISPotion.Classes;
 
+
+import com.potion.ISPotion.Controllers.IngredientController;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 @Entity
 public class Potion {
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    @ManyToMany
+    private  List<Ingredient> ingredients;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -51,14 +68,17 @@ public class Potion {
     }
 
     public Potion() {
+
     }
-    public Potion(String name, ArrayList<Long> ingredientsIds) {
+    public Potion(String name, ArrayList<Long> ingredientsIds, ArrayList<Ingredient> ingredients) {
         this.name = name;
         this.ingredientsIds = ingredientsIds;
+        this.ingredients = ingredients;
     }
 
     public Potion(String name) {
         this.name = name;
         this.ingredientsIds = new ArrayList<Long>();
+        this.ingredients = new ArrayList<Ingredient>();
     }
 }

@@ -2,6 +2,7 @@ package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.Ingredient;
 import com.potion.ISPotion.Classes.Potion;
+import com.potion.ISPotion.Classes.StorageCell;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class PotionController {
             return "redirect:/potion";
         }
         Potion potion = potionRepository.findById(id).orElseThrow();
+        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+
+        model.addAttribute("ingredients", ingredients );
         model.addAttribute("potion", potion );
         model.addAttribute("title", "potion");
         return "potion-edit";
@@ -57,11 +61,13 @@ public class PotionController {
 
     @PostMapping("/potion/add")
     public String potionAdd(@RequestParam String name, @RequestParam String[] ingredientsIds, Model model) {
-        ArrayList<Long> ingredients = new ArrayList<Long>();
+        ArrayList<Long> ids = new ArrayList<Long>();
+        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
         for (String ingredientId: ingredientsIds) {
-            ingredients.add(Long.parseLong(ingredientId));
+            ids.add(Long.parseLong(ingredientId));
+            ingredients.add(ingredientRepository.findById(Long.parseLong(ingredientId)).orElseThrow());
         }
-        Potion potion = new Potion(name, ingredients) ;
+        Potion potion = new Potion(name, ids, ingredients) ;
         potionRepository.save(potion);
         return "redirect:/potion";
     }
