@@ -15,7 +15,15 @@ public class StorageCell {
 
     private Long quantity;
 
-    private boolean testApproved;
+    public int getTestApproved() {
+        return testApproved;
+    }
+
+    public void setTestApproved(int testApproved) {
+        this.testApproved = testApproved;
+    }
+
+    private int testApproved;
 
     public Long getId() {
         return id;

@@ -32,7 +32,10 @@ public class StorageController {
     @GetMapping("/storage")
     public String storage(Model model) {
         Iterable<StorageCell> cells = storageCellRepository.findAll();
+        Iterable<StorageRecord> records = storageRecordRepository.findAll();
+
         model.addAttribute("cells", cells );
+        model.addAttribute("records", records );
         model.addAttribute("title", "Storage");
 
         return "storage";
@@ -101,12 +104,22 @@ public class StorageController {
     }
 
     @PostMapping("/storage/delete/{id}")
-    public String potionDelete(@PathVariable(value = "id") long id) {
+    public String storageCellDelete(@PathVariable(value = "id") long id) {
         if (!storageCellRepository.existsById(id)) {
             return "redirect:/storage";
         }
         StorageCell cell = storageCellRepository.findById(id).orElseThrow();
         storageService.storageCellRemove(cell);
+        return "redirect:/storage";
+    }
+
+    @PostMapping("/storage/record/restore/{id}")
+    public String recordDelete(@PathVariable(value = "id") long id) {
+        if (!storageRecordRepository.existsById(id)) {
+            return "redirect:/storage";
+        }
+        StorageRecord record = storageRecordRepository.findById(id).orElseThrow();
+        storageService.storageRecordRestoreOperation(record);
         return "redirect:/storage";
     }
 

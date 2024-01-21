@@ -4,19 +4,31 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class StorageRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long storage_cell_id;
+    private Long storageCellId;
 
     @Column(name = "operation")
     @Enumerated(EnumType.STRING)
     private StorageRecordOperation operation;
 
     private Long operation_value;
+
+    public int getWas_restored() {
+        return was_restored;
+    }
+
+    public void setWas_restored(int was_restored) {
+        this.was_restored = was_restored;
+    }
+
+    private int was_restored;
 
     @CreationTimestamp
     private Instant date_add;
@@ -32,12 +44,12 @@ public class StorageRecord {
         this.id = id;
     }
 
-    public Long getStorage_cell_id() {
-        return storage_cell_id;
+    public Long getStorageCellId() {
+        return storageCellId;
     }
 
-    public void setStorage_cell_id(Long storage_cell_id) {
-        this.storage_cell_id = storage_cell_id;
+    public void setStorageCellId(Long storageCellId) {
+        this.storageCellId = storageCellId;
     }
 
     public StorageRecordOperation getOperation() {
@@ -56,16 +68,16 @@ public class StorageRecord {
         this.operation_value = operation_value;
     }
 
-    public Instant getDate_add() {
-        return date_add;
+    public String getDate_add() {
+        return date_add.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
     }
 
     public void setDate_add(Instant date_add) {
         this.date_add = date_add;
     }
 
-    public Instant getDate_upd() {
-        return date_upd;
+    public String getDate_upd() {
+        return date_upd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
     }
 
     public void setDate_upd(Instant date_upd) {
@@ -76,9 +88,10 @@ public class StorageRecord {
 
     }
 
-    public  StorageRecord(Long storage_cell_id, StorageRecordOperation operation, Long operation_value) {
-        this.storage_cell_id = storage_cell_id;
+    public  StorageRecord(Long storageCellId, StorageRecordOperation operation, Long operation_value) {
+        this.storageCellId = storageCellId;
         this.operation = operation;
         this.operation_value = operation_value;
+        this.was_restored = 0;
     }
 }

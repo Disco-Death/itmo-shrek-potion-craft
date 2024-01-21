@@ -29,21 +29,22 @@ public class StorageService {
         return storageRecordCreateOperation(savedCell.getId(), StorageRecordOperation.CREATE, savedCell.getQuantity());
     }
     public boolean storageCellRemove(StorageCell cell) {
+        storageRecordsSetAllPreviousRestored(cell);
         storageCellRepository.delete(cell);
         return storageRecordCreateOperation(cell.getId(), StorageRecordOperation.REMOVE, cell.getQuantity());
     }
     public boolean storageCellUpdate(StorageCell cell, Long new_value) {
         long old_quantity = cell.getQuantity();
         if (old_quantity > new_value) {
-            return storageCellSubtraction(cell, old_quantity-new_value);
+            return storageCellSubtraction(cell, old_quantity-new_value, true);
         }
         if (old_quantity < new_value) {
-            return storageCellAddition(cell, new_value-old_quantity);
+            return storageCellAddition(cell, new_value-old_quantity, true);
         }
         return true;
     }
 
-    public boolean storageCellAddition(StorageCell cell, Long operation_value) {
+    public boolean storageCellAddition(StorageCell cell, Long operation_value, boolean withRecord) {
         if (!storageCellRepository.existsById(cell.getId())) {
             return false;
         }
@@ -53,10 +54,13 @@ public class StorageService {
         }
         cell.setQuantity(new_quantity);
         storageCellRepository.save(cell);
-        return storageRecordCreateOperation(cell.getId(), StorageRecordOperation.ADD, operation_value);
+        if (withRecord) {
+            return storageRecordCreateOperation(cell.getId(), StorageRecordOperation.ADD, operation_value);
+        }
+        else return true;
     }
 
-    public boolean storageCellSubtraction(StorageCell cell, Long operation_value) {
+    public boolean storageCellSubtraction(StorageCell cell, Long operation_value, boolean withRecord) {
         if (!storageCellRepository.existsById(cell.getId())) {
             return false;
         }
@@ -66,7 +70,11 @@ public class StorageService {
         }
         cell.setQuantity(new_quantity);
         storageCellRepository.save(cell);
-        return storageRecordCreateOperation(cell.getId(), StorageRecordOperation.SUBTRACTION, operation_value);
+        if (withRecord) {
+            return storageRecordCreateOperation(cell.getId(), StorageRecordOperation.SUBTRACTION, operation_value);
+        }
+        else
+            return true;
     }
 
     public boolean storageRecordRestoreOperation(StorageRecord record) {
@@ -75,17 +83,35 @@ public class StorageService {
         }
         switch(record.getOperation()){
             case SUBTRACTION:
+                StorageCell cellSub = storageCellRepository.findById(record.getStorageCellId()).orElseThrow();
+                storageCellAddition(cellSub, record.getOperation_value(), false);
+                storageCellRepository.save(cellSub);
+
+                record.setWas_restored(1);
+                storageRecordRepository.save(record);
                 break;
             case ADD:
+                StorageCell cellAdd = storageCellRepository.findById(record.getStorageCellId()).orElseThrow();
+                storageCellSubtraction(cellAdd, record.getOperation_value(), false);
+
+                record.setWas_restored(1);
+                storageRecordRepository.save(record);
                 break;
-            case CREATE:
-                break;
-            case REMOVE:
-                break;
+            case CREATE, REMOVE:
             default:
                 break;
         }
 
+        return true;
+    }
+
+    public boolean storageRecordsSetAllPreviousRestored(StorageCell cell) {
+        Iterable<StorageRecord> previousRecords = storageRecordRepository.findAllByStorageCellId(cell.getId());
+        for (StorageRecord previousRecord: previousRecords
+             ) {
+            previousRecord.setWas_restored(1);
+            storageRecordRepository.save(previousRecord);
+        }
         return true;
     }
 
@@ -96,6 +122,6 @@ public class StorageService {
     }
 
     public Set<StorageCell> getAllPotionsForSale() {
-        return storageCellRepository.findAllByEntityAndTestApproved(StorageEntity.Potion, true);
+        return storageCellRepository.findAllByEntityAndTestApproved(StorageEntity.Potion, 1);
     }
 }
