@@ -7,6 +7,7 @@ import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
 import com.potion.ISPotion.repo.UserRepository;
 import com.potion.ISPotion.utils.AuthUtils;
+import com.potion.ISPotion.utils.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -27,6 +28,8 @@ public class SaleController {
     private PotionRepository potionRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StorageService storageService;
 
     @GetMapping("/sale")
     public String sale(@CurrentSecurityContext(expression="authentication")
@@ -42,9 +45,7 @@ public class SaleController {
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
-        {
             return "redirect:/home";
-        }
 
         Iterable<Sale> sales = saleRepository.findAll();
 
@@ -69,9 +70,7 @@ public class SaleController {
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
-        {
             return "redirect:/home";
-        }
 
         Sale sale = saleRepository.findById(id).orElseThrow();
 
@@ -96,13 +95,12 @@ public class SaleController {
                 Role.SALES_DEPT
         ));
 
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        var userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
-        {
             return "redirect:/home";
-        }
 
-        Iterable<Potion> potions = potionRepository.findAll();
+        var potionsIds = storageService.getAllPotionsIdsForSale();
+        var potions = potionRepository.findAllById(potionsIds);
 
         model.addAttribute("title", "Добавить продажу");
         model.addAttribute("potions", potions);
@@ -131,13 +129,15 @@ public class SaleController {
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
-        {
             return "redirect:/home";
-        }
 
-        if (!potionRepository.existsById(potionId)) {
+        if (!potionRepository.existsById(potionId))
             return "redirect:/sale";
-        }
+
+        boolean successTaking = storageService.takePotionsFromStorageForSaleByPotionId(potionId, quantity);
+
+        if (!successTaking)
+            return "redirect:/storage";
 
         Potion potion = potionRepository.findById(potionId).orElseThrow();
         Sale sale = new Sale(potion, quantity, price, client);
@@ -164,13 +164,10 @@ public class SaleController {
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
-        {
             return "redirect:/home";
-        }
 
-        if (!saleRepository.existsById(id)) {
+        if (!saleRepository.existsById(id))
             return "redirect:/sale";
-        }
 
         Sale sale = saleRepository.findById(id).orElseThrow();
         Iterable<Potion> potions = potionRepository.findAll();
@@ -202,18 +199,16 @@ public class SaleController {
                 Role.SALES_DEPT
         ));
 
+        // TODO: Check Storage
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
-        {
             return "redirect:/home";
-        }
 
-        if (!saleRepository.existsById(id)) {
+        if (!saleRepository.existsById(id))
             return "redirect:/sale";
-        }
-        if (!potionRepository.existsById(potionId)) {
+        if (!potionRepository.existsById(potionId))
             return "redirect:/sale";
-        }
 
         Potion potion = potionRepository.findById(potionId).orElseThrow();
         Sale sale = saleRepository.findById(id).orElseThrow();
@@ -242,15 +237,14 @@ public class SaleController {
                 Role.SALES_DEPT
         ));
 
+        // TODO: Restore Storage
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
-        {
             return "redirect:/home";
-        }
 
-        if (!saleRepository.existsById(id)) {
+        if (!saleRepository.existsById(id))
             return "redirect:/sale";
-        }
         saleRepository.deleteById(id);
 
         return "redirect:/sale";

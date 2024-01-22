@@ -12,4 +12,5 @@ import java.util.Set;
 @Repository
 public interface StorageCellRepository extends CrudRepository<StorageCell, Long> {
     Set<StorageCell> findAllByEntityAndTestApproved(StorageEntity entity, int testApproved);
+    Set<StorageCell> findAllByEntityIdAndTestApproved(long entity_id, int testApproved);
 }

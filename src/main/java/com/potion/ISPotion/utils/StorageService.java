@@ -1,9 +1,6 @@
 package com.potion.ISPotion.utils;
 
-import com.potion.ISPotion.Classes.StorageCell;
-import com.potion.ISPotion.Classes.StorageEntity;
-import com.potion.ISPotion.Classes.StorageRecord;
-import com.potion.ISPotion.Classes.StorageRecordOperation;
+import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.StorageCellRepository;
@@ -11,6 +8,7 @@ import com.potion.ISPotion.repo.StorageRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Component
@@ -121,7 +119,51 @@ public class StorageService {
         return storageRecordRepository.existsById(record.getId());
     }
 
-    public Set<StorageCell> getAllPotionsForSale() {
+    public Set<StorageCell> getAllStorageCellsForSale() {
         return storageCellRepository.findAllByEntityAndTestApproved(StorageEntity.Potion, 1);
+    }
+
+    public Iterable<Long> getAllPotionsIdsForSale() {
+        var potionStorageCells = getAllStorageCellsForSale();
+        var potionsIds = new HashSet<Long>();
+
+        for (var potionStorageCell: potionStorageCells) {
+            potionsIds.add(potionStorageCell.getEntity_id());
+        }
+
+        return potionsIds;
+    }
+
+    public Iterable<StorageCell> getAllStorageCellsByEntityIdForSale(long entityId) {
+        return storageCellRepository.findAllByEntityIdAndTestApproved(entityId, 1);
+    }
+
+    public boolean takePotionsFromStorageForSaleByPotionId(long potionId, long quantity) {
+        var storageCells = getAllStorageCellsByEntityIdForSale(potionId);
+
+        long sumQuantity = 0;
+
+        for (var storageCell: storageCells) {
+            sumQuantity += storageCell.getQuantity();
+            if (sumQuantity >= quantity)
+                break;
+        }
+
+        if (sumQuantity < quantity)
+            return false;
+
+        for (var storageCell: storageCells) {
+            long storageCellQuantity = storageCell.getQuantity();
+
+            if (storageCellQuantity >= sumQuantity) {
+                storageCellSubtraction(storageCell, sumQuantity, true);
+                break;
+            }
+
+            storageCellSubtraction(storageCell, storageCellQuantity, true);
+            sumQuantity -= storageCellQuantity;
+        }
+
+        return true;
     }
 }
