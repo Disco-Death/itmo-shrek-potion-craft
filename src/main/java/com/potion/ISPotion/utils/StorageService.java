@@ -134,8 +134,10 @@ public class StorageService {
         return potionsIds;
     }
 
-    public Iterable<StorageCell> getAllStorageCellsByEntityIdForSale(long entityId) {
-        return storageCellRepository.findAllByEntityIdAndTestApproved(entityId, 1);
+    public Iterable<StorageCell> getAllStorageCellsByEntityIdForSale(Long entityId) {
+        Set<StorageCell> storageCells = getAllStorageCellsForSale();
+
+        return storageCells.stream().filter(s -> s.getEntity_id().equals(entityId)).toList();
     }
 
     public boolean takePotionsFromStorageForSaleByPotionId(long potionId, long quantity) {

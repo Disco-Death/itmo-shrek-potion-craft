@@ -3,13 +3,17 @@ package com.potion.ISPotion;
 import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.Sale;
 import com.potion.ISPotion.Classes.User;
+import com.potion.ISPotion.Controllers.SaleController;
+import com.potion.ISPotion.config.MvcConfig;
+import com.potion.ISPotion.config.WebSecurityConfig;
 import com.potion.ISPotion.repo.SaleRepository;
 import com.potion.ISPotion.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -23,8 +27,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(SaleController.class)
+@ContextConfiguration(classes={WebSecurityConfig.class, MvcConfig.class})
+@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
 public class SaleControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +48,7 @@ public class SaleControllerTest {
         userRoles.add(Role.SALES_DEPT);
         user.setRoles(userRoles); // Установка роли пользователя
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(user)); // Мокирование метода findById() репозитория пользователя
+        when(userRepository.findByUsername(any())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
 
         Sale sale1 = new Sale(); // Создание объекта Sale
         Sale sale2 = new Sale(); // Создание объекта Sale
