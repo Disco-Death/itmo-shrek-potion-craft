@@ -5,8 +5,8 @@
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
 <p>Изменить ячейку</p>
-  <form method="post" class="form-group mt-2 mb-2">
-    <select name="entity">
+  <form method="post" class="form-group mt-2 mb-2 col-md-2">
+    <select name="entity" class="form-control border mt-2 mb-2">
       <option th:each="entity : ${entities}"
               th:value="${{entity}}"
               th:text="${entity}"
@@ -15,7 +15,7 @@
       >
       </option>
     </select>
-    <select name="ingredientId">
+    <select th:if="${currentCell.entity.name() == 'Ingredient'}" id="selectIngredient" name="ingredientId" class="form-control border mt-2 mb-2">
       <option th:each="ingredient : ${ingredients}"
               th:value="${{ingredient.id}}"
               th:text="${ingredient.name}"
@@ -24,7 +24,7 @@
       >
       </option>
     </select>
-    <select name="potionId">
+    <select th:if="${currentCell.entity.name() == 'Potion'}" id="selectPotion" name="potionId" class="form-control border mt-2 mb-2">
       <option th:each="potion : ${potions}"
               th:value="${{potion.id}}"
               th:text="${potion.name}"
