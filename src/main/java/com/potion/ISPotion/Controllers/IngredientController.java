@@ -13,7 +13,7 @@ import java.util.Optional;
 @Controller
 public class IngredientController {
     @Autowired
-    private IngredientRepository ingredientRepository;
+    public IngredientRepository ingredientRepository;
 
     @GetMapping("/ingredient/add")
     public String ingredientDisplayAdd(Model model) {
