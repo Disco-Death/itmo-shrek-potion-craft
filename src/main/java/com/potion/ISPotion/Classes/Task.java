@@ -15,6 +15,9 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
     public Long getId() {
         return id;
     }
@@ -37,5 +40,13 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }

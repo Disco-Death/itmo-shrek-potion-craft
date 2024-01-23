@@ -6,8 +6,9 @@ CREATE TABLE IF NOT EXISTS ingredients
 );
 
 CREATE TABLE task (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     description VARCHAR(255),
     user_id BIGINT,
+    status VARCHAR(50),
     FOREIGN KEY (user_id) REFERENCES usr(id)
 );
