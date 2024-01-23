@@ -31,6 +31,9 @@ public class Potion {
 
     private String name;
 
+    @OneToMany(mappedBy = "potion")
+    private List<Sale> sales;
+
     public ArrayList<Long> getIngredientsIds() {
         return ingredientsIds;
     }
