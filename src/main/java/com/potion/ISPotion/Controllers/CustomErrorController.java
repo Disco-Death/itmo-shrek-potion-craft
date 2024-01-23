@@ -1,4 +1,4 @@
-package com.potion.ISPotion.Classes;
+package com.potion.ISPotion.Controllers;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
