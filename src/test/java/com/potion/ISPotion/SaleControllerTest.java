@@ -1,24 +1,24 @@
 package com.potion.ISPotion;
 
+import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.Sale;
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.Controllers.SaleController;
-import com.potion.ISPotion.config.MvcConfig;
-import com.potion.ISPotion.config.WebSecurityConfig;
+import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
 import com.potion.ISPotion.repo.UserRepository;
+
+import com.potion.ISPotion.utils.StorageService;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,9 +27,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SaleController.class)
-@ContextConfiguration(classes={WebSecurityConfig.class, MvcConfig.class})
-@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
+@WebMvcTest(value=SaleController.class)
+// @ContextConfiguration(classes={WebSecurityConfig.class, MvcConfig.class})
+// @AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
 public class SaleControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +38,13 @@ public class SaleControllerTest {
     private SaleRepository saleRepository;
 
     @MockBean
+    private PotionRepository potionRepository;
+
+    @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private StorageService storageService;
 
     @Test
     public void testSaleMethodWithAllowedRole() throws Exception {
@@ -50,8 +56,12 @@ public class SaleControllerTest {
 
         when(userRepository.findByUsername(any())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
 
+        Potion potion = new Potion();
+        potion.setName("");
         Sale sale1 = new Sale(); // Создание объекта Sale
+        sale1.setPotion(potion);
         Sale sale2 = new Sale(); // Создание объекта Sale
+        sale2.setPotion(potion);
 
         when(saleRepository.findAll()).thenReturn(Arrays.asList(sale1, sale2)); // Мокирование метода findAll() репозитория продаж
 
@@ -71,7 +81,7 @@ public class SaleControllerTest {
         userRoles.add(Role.TEST_DEPT);
         user.setRoles(userRoles); // Установка роли пользователя
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(user)); // Мокирование метода findById() репозитория пользователя
+        when(userRepository.findByUsername(any())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
 
         mockMvc.perform(get("/sale")
                         .with(user("user").roles("CUSTOMER_SERVICE"))) // Выполнение GET запроса на /sale с пользователем, у которого есть роль CUSTOMER_SERVICE
