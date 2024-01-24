@@ -12,6 +12,7 @@ import com.potion.ISPotion.repo.UserRepository;
 import com.potion.ISPotion.utils.StorageService;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,17 +20,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value=SaleController.class)
-// @ContextConfiguration(classes={WebSecurityConfig.class, MvcConfig.class})
-// @AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
 public class SaleControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -49,12 +52,10 @@ public class SaleControllerTest {
     @Test
     public void testSaleMethodWithAllowedRole() throws Exception {
         var user = new User(); // Создание пользователя
-
+        user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
         userRoles.add(Role.SALES_DEPT);
         user.setRoles(userRoles); // Установка роли пользователя
-
-        when(userRepository.findByUsername(any())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
 
         Potion potion = new Potion();
         potion.setName("");
@@ -63,10 +64,11 @@ public class SaleControllerTest {
         Sale sale2 = new Sale(); // Создание объекта Sale
         sale2.setPotion(potion);
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
         when(saleRepository.findAll()).thenReturn(Arrays.asList(sale1, sale2)); // Мокирование метода findAll() репозитория продаж
 
         mockMvc.perform(get("/sale")
-                        .with(user("user").roles("SALES_DEPT"))) // Выполнение GET запроса на /sale с пользователем, у которого есть роль SALES_DEPT
+                        .with(user(user.getUsername()).roles(user.getRoles().toString())))
                 .andExpect(status().isOk()) // Проверка статуса ответа
                 .andExpect(view().name("sale")) // Проверка имени вьюхи
                 .andExpect(model().attributeExists("title")) // Проверка наличия атрибута "title" в модели
@@ -76,16 +78,61 @@ public class SaleControllerTest {
     @Test
     public void testSaleMethodWithNotAllowedRole() throws Exception {
         User user = new User(); // Создание пользователя
-
+        user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
         userRoles.add(Role.TEST_DEPT);
         user.setRoles(userRoles); // Установка роли пользователя
 
-        when(userRepository.findByUsername(any())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
+        when(userRepository.findByUsername(anyString())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
 
         mockMvc.perform(get("/sale")
-                        .with(user("user").roles("CUSTOMER_SERVICE"))) // Выполнение GET запроса на /sale с пользователем, у которого есть роль CUSTOMER_SERVICE
+                .with(user(user.getUsername()).roles(user.getRoles().toString())))
                 .andExpect(status().is3xxRedirection()) // Проверка, что ответ - редирект
                 .andExpect(redirectedUrl("/home")); // Проверка URL, на который происходит редирект
+    }
+
+    @Test
+    public void testSaleAddMethod() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.SALES_DEPT);
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        Potion potion = new Potion();
+        potion.setId(1L);
+        potion.setName("potion name");
+
+        Sale sale = new Sale();
+        sale.setPotion(potion);
+        sale.setQuantity(5L);
+        sale.setPrice(10L);
+        sale.setClient("test client");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(potionRepository.existsById(anyLong())).thenReturn(true);
+        when(storageService.takePotionsFromStorageForSaleByPotionId(anyLong(), anyLong())).thenReturn(true);
+        when(potionRepository.findById(anyLong())).thenReturn(Optional.of(potion));
+
+        mockMvc.perform(post("/sale/add")
+                        .param("potionId", potion.getId().toString())
+                        .param("quantity", sale.getQuantity().toString())
+                        .param("price", sale.getPrice().toString())
+                        .param("client", sale.getClient())
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/sale"))
+                .andExpect(view().name("redirect:/sale"));
+
+        ArgumentCaptor<Sale> saleCaptor = ArgumentCaptor.forClass(Sale.class);
+        verify(saleRepository).save(saleCaptor.capture());
+
+        Sale capturedSale = saleCaptor.getValue();
+        assertEquals(sale.getPotion(), capturedSale.getPotion());
+        assertEquals(sale.getQuantity(), capturedSale.getQuantity());
+        assertEquals(sale.getPrice(), capturedSale.getPrice());
+        assertEquals(sale.getClient(), capturedSale.getClient());
     }
 }
