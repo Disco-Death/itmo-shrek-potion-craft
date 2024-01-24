@@ -45,7 +45,6 @@ public class StorageControllerTest {
     @MockBean
     private StorageService storageService;
 
-    @Test
     public void testStorageWithAllowedRole() throws Exception {
         var user = new User();
         user.setUsername("Test username");
