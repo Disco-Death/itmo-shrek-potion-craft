@@ -199,8 +199,6 @@ public class SaleController {
                 Role.SALES_DEPT
         ));
 
-        // TODO: Check Storage
-
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
             return "redirect:/home";
@@ -210,10 +208,32 @@ public class SaleController {
         if (!potionRepository.existsById(potionId))
             return "redirect:/sale";
 
-        Potion potion = potionRepository.findById(potionId).orElseThrow();
         Sale sale = saleRepository.findById(id).orElseThrow();
+        Potion salePotion = sale.getPotion();
 
-        sale.setPotion(potion);
+        if (potionId.equals(salePotion.getId())) {
+            if (quantity < sale.getQuantity()) {
+                storageService.returnPotionsToStorageForSaleByPotionId(potionId, sale.getQuantity() - quantity);
+            } else if (quantity > sale.getQuantity()) {
+                boolean successTaking = storageService.takePotionsFromStorageForSaleByPotionId(potionId, quantity - sale.getQuantity());
+
+                if (!successTaking) {
+                    return "redirect:/sale";
+                }
+            }
+        } else {
+            boolean successTaking = storageService.takePotionsFromStorageForSaleByPotionId(potionId, quantity);
+
+            if (!successTaking) {
+                return "redirect:/sale";
+            }
+
+            storageService.returnPotionsToStorageForSaleByPotionId(salePotion.getId(), sale.getQuantity());
+
+            Potion potion = potionRepository.findById(potionId).orElseThrow();
+            sale.setPotion(potion);
+        }
+
         sale.setQuantity(quantity);
         sale.setPrice(price);
         sale.setClient(client);
@@ -237,14 +257,18 @@ public class SaleController {
                 Role.SALES_DEPT
         ));
 
-        // TODO: Restore Storage
-
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
             return "redirect:/home";
 
         if (!saleRepository.existsById(id))
             return "redirect:/sale";
+
+        Sale sale = saleRepository.findById(id).orElseThrow();
+        Potion salePotion = sale.getPotion();
+
+        storageService.returnPotionsToStorageForSaleByPotionId(salePotion.getId(), sale.getQuantity());
+
         saleRepository.deleteById(id);
 
         return "redirect:/sale";
