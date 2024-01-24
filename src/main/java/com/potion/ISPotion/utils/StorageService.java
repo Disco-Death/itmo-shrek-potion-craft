@@ -152,7 +152,7 @@ public class StorageService {
     }
 
     public boolean isEnoughPotionsInStorageForSaleByPotionId(long potionId, long quantity) {
-        return quantity < sumPotionsQuantityInStorageForSaleByPotionId(potionId);
+        return quantity <= sumPotionsQuantityInStorageForSaleByPotionId(potionId);
     }
 
     public boolean takePotionsFromStorageForSaleByPotionId(long potionId, long quantity) {
