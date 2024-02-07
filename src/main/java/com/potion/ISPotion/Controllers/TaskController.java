@@ -52,11 +52,9 @@ public class TaskController {
                              Authentication authentication,
                              @RequestParam String description, @RequestParam String username) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.DIRECTOR,
                 Role.HEAD,
                 Role.MERLIN,
-                Role.USER
+                Role.EMPLOYEE
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -82,11 +80,9 @@ public class TaskController {
                                  Authentication authentication,
                                  @PathVariable Long taskId) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.DIRECTOR,
                 Role.HEAD,
                 Role.MERLIN,
-                Role.USER
+                Role.EMPLOYEE
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -107,11 +103,9 @@ public class TaskController {
         } else {
             // Проверяем роли для остальных статусов
             Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                    Role.ADMIN,
-                    Role.DIRECTOR,
                     Role.HEAD,
                     Role.MERLIN,
-                    Role.USER
+                    Role.EMPLOYEE
             ));
 
             Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);

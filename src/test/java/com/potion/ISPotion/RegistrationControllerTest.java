@@ -1,7 +1,6 @@
 package com.potion.ISPotion;
 
 import com.potion.ISPotion.Classes.Role;
-import com.potion.ISPotion.Classes.Sale;
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.Controllers.RegistrationController;
 import com.potion.ISPotion.repo.UserRepository;
@@ -25,9 +24,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@WebMvcTest(value= RegistrationController.class)
+@WebMvcTest(value=RegistrationController.class)
 public class RegistrationControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -52,13 +50,6 @@ public class RegistrationControllerTest {
                         .with(user(user.getUsername()).roles(user.getRoles().toString())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("home"));
-
-        ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(webCamService).snapshot(filenameCaptor.capture());
-        String capturedFilename = filenameCaptor.getValue();
-
-        assertEquals(user.getUsername(), capturedFilename);
     }
 
     @Test

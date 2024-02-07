@@ -2,6 +2,8 @@ package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 public class StorageCell {
     @Id
@@ -14,6 +16,12 @@ public class StorageCell {
     private Long entity_id;
 
     private Long quantity;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public int getTestApproved() {
         return testApproved;
@@ -63,5 +71,9 @@ public class StorageCell {
         this.entity = entity;
         this.entity_id = entity_id;
         this.quantity = quantity;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }

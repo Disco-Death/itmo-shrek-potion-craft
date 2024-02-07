@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,12 @@ public class Potion {
 
     @OneToMany(mappedBy = "potion")
     private List<Sale> sales;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public ArrayList<Long> getIngredientsIds() {
         return ingredientsIds;
@@ -83,5 +90,9 @@ public class Potion {
         this.name = name;
         this.ingredientsIds = new ArrayList<Long>();
         this.ingredients = new ArrayList<Ingredient>();
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }

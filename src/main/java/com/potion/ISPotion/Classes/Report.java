@@ -3,6 +3,8 @@ package com.potion.ISPotion.Classes;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Date;
+
 @Entity
 public class Report {
     @Id
@@ -13,6 +15,12 @@ public class Report {
     private String  body;
     @Column(columnDefinition = "boolean default false")
     private boolean isSended;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public boolean isSended() {
         return isSended;
@@ -63,5 +71,9 @@ public class Report {
         this.subject = subject;
         this.body = body;
         this.isSended = false;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }

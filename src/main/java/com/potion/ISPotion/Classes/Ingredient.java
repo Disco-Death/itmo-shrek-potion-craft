@@ -1,10 +1,9 @@
 
 package com.potion.ISPotion.Classes;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity
 public class Ingredient {
@@ -13,6 +12,12 @@ public class Ingredient {
     private Long id;
 
     private String name, property;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -42,6 +47,10 @@ public class Ingredient {
     public Ingredient(String name, String property) {
         this.name = name;
         this. property = property;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }
 

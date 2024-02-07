@@ -2,6 +2,8 @@ package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 public class Task {
 
@@ -17,6 +19,12 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -48,5 +56,9 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }

@@ -10,5 +10,5 @@ import java.util.Set;
 public interface UserRepository extends CrudRepository<User, Long> {
     User findByUsername(String username);
     Set<User> findAllByUsername(String username);
-
+    Set<User> findAllByOrderByCreationDateAsc();
 }
