@@ -1,7 +1,7 @@
 package com.potion.ISPotion.Controllers;
 
-import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.Potion;
+import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.Sale;
 import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
@@ -16,7 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
 @Controller
 public class SaleController {
@@ -63,7 +65,7 @@ public class SaleController {
                               @PathVariable(value = "id") long id,
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.SALES_DEPT,
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
@@ -85,16 +87,13 @@ public class SaleController {
                                      Authentication authentication,
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
-                Role.HEAD,
-                Role.SALES_DEPT
-        ));
 
         var userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
+        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles)))
             return "redirect:/home";
 
         var potionsIds = storageService.getAllPotionsIdsForSale();
@@ -115,16 +114,13 @@ public class SaleController {
                           @RequestParam String client,
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
-                Role.HEAD,
-                Role.SALES_DEPT
-        ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
+        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles)))
             return "redirect:/home";
 
         if (!potionRepository.existsById(potionId))
@@ -148,16 +144,13 @@ public class SaleController {
                                   @PathVariable(value = "id") long id,
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
-                Role.HEAD,
-                Role.SALES_DEPT
-        ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
+        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles)))
             return "redirect:/home";
 
         if (!saleRepository.existsById(id))
@@ -183,16 +176,13 @@ public class SaleController {
                            @RequestParam String client,
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
-                Role.HEAD,
-                Role.SALES_DEPT
-        ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
+        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles)))
             return "redirect:/home";
 
         if (!saleRepository.existsById(id))
@@ -239,16 +229,13 @@ public class SaleController {
                                  Authentication authentication,
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
                 Role.MERLIN,
                 Role.EMPLOYEE
         ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
-                Role.HEAD,
-                Role.SALES_DEPT
-        ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole)))
+        if (!(AuthUtils.anyAllowedRole(userRoles, allowedRoles)))
             return "redirect:/home";
 
         if (!saleRepository.existsById(id))

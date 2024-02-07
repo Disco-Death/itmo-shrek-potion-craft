@@ -44,7 +44,7 @@ public class RegistrationController {
             return "registration";
         }
         user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(Role.EMPLOYEE));
         userRepository.save(user);
         return "redirect:/login";
     }
@@ -125,7 +125,7 @@ public class RegistrationController {
         User user = new User();
 
         if (newRoles.isEmpty()) {
-            newRoles = Collections.singleton(Role.USER);
+            newRoles = Collections.singleton(Role.EMPLOYEE);
         }
         user.setUsername(newUserName);
         user.setPassword(newPassword);

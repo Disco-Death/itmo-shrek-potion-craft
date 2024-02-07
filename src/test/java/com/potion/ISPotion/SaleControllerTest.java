@@ -50,7 +50,7 @@ public class SaleControllerTest {
     private StorageService storageService;
 
     @Test
-    public void testSaleMethodWithAllowedRole() throws Exception {
+    public void testSaleWithAllowedRole() throws Exception {
         var user = new User(); // Создание пользователя
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
@@ -76,7 +76,7 @@ public class SaleControllerTest {
     }
 
     @Test
-    public void testSaleMethodWithNotAllowedRole() throws Exception {
+    public void testSaleWithNotAllowedRole() throws Exception {
         User user = new User(); // Создание пользователя
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
@@ -92,11 +92,10 @@ public class SaleControllerTest {
     }
 
     @Test
-    public void testSaleAddMethod() throws Exception {
+    public void testSaleAdd() throws Exception {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.SALES_DEPT);
         userRoles.add(Role.HEAD);
         user.setRoles(userRoles);
 
@@ -134,5 +133,52 @@ public class SaleControllerTest {
         assertEquals(sale.getQuantity(), capturedSale.getQuantity());
         assertEquals(sale.getPrice(), capturedSale.getPrice());
         assertEquals(sale.getClient(), capturedSale.getClient());
+    }
+
+    @Test
+    public void testSaleDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        Potion potion = new Potion();
+        potion.setId(1L);
+        potion.setName("potion name");
+
+        Sale sale = new Sale();
+        sale.setId(1L);
+        sale.setPotion(potion);
+        sale.setQuantity(5L);
+        sale.setPrice(10L);
+        sale.setClient("test client");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(saleRepository.existsById(anyLong())).thenReturn(true);
+        when(saleRepository.findById(anyLong())).thenReturn(Optional.of(sale));
+
+        mockMvc.perform(post("/sale/delete/1")
+                        .param("id", sale.getId().toString())
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/sale"))
+                .andExpect(view().name("redirect:/sale"));
+
+        ArgumentCaptor<Long> saleIdCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(saleRepository).deleteById(saleIdCaptor.capture());
+
+        long capturedSaleId = saleIdCaptor.getValue();
+        assertEquals(sale.getId(), capturedSaleId);
+
+        saleIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Long> saleQuantityCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(storageService).returnPotionsToStorageForSaleByPotionId(saleIdCaptor.capture(), saleQuantityCaptor.capture());
+
+        capturedSaleId = saleIdCaptor.getValue();
+        long capturedSaleQuantity = saleQuantityCaptor.getValue();
+        assertEquals(sale.getId(), capturedSaleId);
+        assertEquals(sale.getQuantity(), capturedSaleQuantity);
     }
 }
