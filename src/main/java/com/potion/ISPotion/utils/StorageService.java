@@ -140,32 +140,44 @@ public class StorageService {
         return storageCells.stream().filter(s -> s.getEntity_id().equals(entityId)).toList();
     }
 
-    public boolean takePotionsFromStorageForSaleByPotionId(long potionId, long quantity) {
+    public long sumPotionsQuantityInStorageForSaleByPotionId(long potionId) {
         var storageCells = getAllStorageCellsByEntityIdForSale(potionId);
-
         long sumQuantity = 0;
 
         for (var storageCell: storageCells) {
             sumQuantity += storageCell.getQuantity();
-            if (sumQuantity >= quantity)
-                break;
         }
 
-        if (sumQuantity < quantity)
+        return sumQuantity;
+    }
+
+    public boolean isEnoughPotionsInStorageForSaleByPotionId(long potionId, long quantity) {
+        return quantity <= sumPotionsQuantityInStorageForSaleByPotionId(potionId);
+    }
+
+    public boolean takePotionsFromStorageForSaleByPotionId(long potionId, long quantity) {
+        if (!isEnoughPotionsInStorageForSaleByPotionId(potionId, quantity))
             return false;
+
+        var storageCells = getAllStorageCellsByEntityIdForSale(potionId);
 
         for (var storageCell: storageCells) {
             long storageCellQuantity = storageCell.getQuantity();
 
-            if (storageCellQuantity >= sumQuantity) {
-                storageCellSubtraction(storageCell, sumQuantity, true);
+            if (storageCellQuantity >= quantity) {
+                storageCellSubtraction(storageCell, quantity, true);
                 break;
             }
 
             storageCellSubtraction(storageCell, storageCellQuantity, true);
-            sumQuantity -= storageCellQuantity;
+            quantity -= storageCellQuantity;
         }
 
         return true;
+    }
+
+    public void returnPotionsToStorageForSaleByPotionId(long potionId, long quantity) {
+        StorageCell storageCell = new StorageCell(StorageEntity.Potion,  potionId, quantity);
+        storageCellCreate(storageCell);
     }
 }
