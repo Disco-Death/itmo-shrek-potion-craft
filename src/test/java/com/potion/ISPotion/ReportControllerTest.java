@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@WebMvcTest(value= ReportController.class)
+@WebMvcTest(value=ReportController.class)
 public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
