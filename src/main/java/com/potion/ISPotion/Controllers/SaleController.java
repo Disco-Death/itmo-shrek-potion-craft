@@ -8,15 +8,13 @@ import com.potion.ISPotion.repo.SaleRepository;
 import com.potion.ISPotion.repo.UserRepository;
 import com.potion.ISPotion.utils.AuthUtils;
 import com.potion.ISPotion.utils.StorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -30,6 +28,11 @@ public class SaleController {
     private UserRepository userRepository;
     @Autowired
     private StorageService storageService;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     @GetMapping("/sale")
     public String sale(@CurrentSecurityContext(expression="authentication")

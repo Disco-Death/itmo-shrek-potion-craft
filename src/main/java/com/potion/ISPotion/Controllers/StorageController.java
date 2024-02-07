@@ -6,6 +6,7 @@ import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.StorageCellRepository;
 import com.potion.ISPotion.repo.StorageRecordRepository;
 import com.potion.ISPotion.utils.StorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,11 @@ public class StorageController {
     private StorageRecordRepository storageRecordRepository;
     @Autowired
     private StorageService storageService;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     @GetMapping("/storage")
     public String storage(Model model) {

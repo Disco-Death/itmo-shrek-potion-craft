@@ -6,10 +6,12 @@ import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.StorageCellRepository;
 import com.potion.ISPotion.repo.StorageRecordRepository;
 import com.potion.ISPotion.utils.StorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -25,6 +27,11 @@ public class TestsController {
     private StorageRecordRepository storageRecordRepository;
     @Autowired
     private StorageService storageService;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
     @GetMapping("/tests")
     public String testsDisplay(Model model) {
         Iterable<StorageCell> cells = storageCellRepository.findAll();
