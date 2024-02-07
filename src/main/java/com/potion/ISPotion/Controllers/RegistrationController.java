@@ -2,6 +2,8 @@ package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.repo.UserRepository;
+import com.potion.ISPotion.utils.AuthUtils;
+import com.potion.ISPotion.utils.WebCamService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.*;
 
 
 @Controller
@@ -42,7 +44,7 @@ public class RegistrationController {
             return "registration";
         }
         user.setActive(true);
-        user.setRoles(Collections.singleton(Role.EMPLOYEE));
+        user.setRoles(Collections.singleton(Role.USER));
         userRepository.save(user);
         return "redirect:/login";
     }
@@ -61,7 +63,7 @@ public class RegistrationController {
             return "redirect:/users";
         }
         User user = userRepository.findById(id).orElseThrow();
-        user.getRoles().contains(Role.EMPLOYEE);
+
         model.addAttribute("user", user );
         model.addAttribute("roles", Role.values() );
 
@@ -74,9 +76,71 @@ public class RegistrationController {
         if (!userRepository.existsById(id)) {
             return "redirect:/users";
         }
-        //request.getParameterValues("roles")
-        User user = userRepository.findById(id).orElseThrow();
+        ArrayList<Role> newUserRoles = new ArrayList<Role>();
+        String[] roles = request.getParameterValues("roles");
+        String newPassword = Arrays.toString(request.getParameterValues("password")).replace("[", "").replace("]", "");
+        Boolean newIsActive = Arrays.toString(request.getParameterValues("isActive")).contains("on");
+        for (String role : roles
+        ) {
+            newUserRoles.add(Role.valueOf(role));
+        }
+        Set<Role> newRoles = new HashSet<Role>(newUserRoles);
 
+        User user = userRepository.findById(id).orElseThrow();
+        if (!newPassword.isEmpty() && !user.getPassword().contentEquals(newPassword)) {
+            user.setPassword(newPassword);
+        }
+        if (!newRoles.isEmpty() && !user.getRoles().containsAll(newRoles)) {
+            user.setRoles(newRoles);
+        }
+        if (user.isActive() != newIsActive) {
+            user.setActive(newIsActive);
+        }
+
+        userRepository.save(user);
+
+        return "redirect:/users";
+    }
+
+    @GetMapping("/users/add")
+    public String userDisplayAdd(Model model) {
+        model.addAttribute("roles", Role.values() );
+        model.addAttribute("title", "Добавление нового пользователя");
+        return "user-add";
+    }
+
+    @PostMapping("/users/add")
+    public String userAdd(HttpServletRequest request, Model model) {
+        ArrayList<Role> newUserRoles = new ArrayList<Role>();
+        String[] roles = request.getParameterValues("roles");
+        String newUserName = Arrays.toString(request.getParameterValues("user-name")).replace("[", "").replace("]", "");
+        String newPassword = Arrays.toString(request.getParameterValues("password")).replace("[", "").replace("]", "");
+        Boolean newIsActive = Arrays.toString(request.getParameterValues("isActive")).contains("on");
+        for (String role : roles
+        ) {
+            newUserRoles.add(Role.valueOf(role));
+        }
+        Set<Role> newRoles = new HashSet<Role>(newUserRoles);
+
+        User user = new User();
+
+        if (newRoles.isEmpty()) {
+            newRoles = Collections.singleton(Role.USER);
+        }
+        user.setUsername(newUserName);
+        user.setPassword(newPassword);
+        user.setRoles(newRoles);
+        user.setActive(newIsActive);
+
+        userRepository.save(user);
+        return "redirect:/users";
+    }
+    @PostMapping("/users/delete/{id}")
+    public String userDelete(@PathVariable(value = "id") long id) {
+        if (!userRepository.existsById(id)) {
+            return "redirect:/users";
+        }
+        userRepository.deleteById(id);
         return "redirect:/users";
     }
 }
