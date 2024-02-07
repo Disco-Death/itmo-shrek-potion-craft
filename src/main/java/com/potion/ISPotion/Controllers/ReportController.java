@@ -3,19 +3,21 @@ package com.potion.ISPotion.Controllers;
 import com.potion.ISPotion.Classes.Ingredient;
 import com.potion.ISPotion.Classes.Report;
 import com.potion.ISPotion.repo.ReportRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class ReportController {
     @Autowired
     private ReportRepository reportRepository;
 
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
     @GetMapping("/report")
     public String report(Model model) {
         Iterable<Report> reports = reportRepository.findAll();

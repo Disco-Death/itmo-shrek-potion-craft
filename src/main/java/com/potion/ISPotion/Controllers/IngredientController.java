@@ -1,6 +1,7 @@
 package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.Ingredient;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,11 @@ import java.util.Optional;
 public class IngredientController {
     @Autowired
     public IngredientRepository ingredientRepository;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     @GetMapping("/ingredient/add")
     public String ingredientDisplayAdd(Model model) {

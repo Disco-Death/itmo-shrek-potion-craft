@@ -5,6 +5,7 @@ import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.StorageCell;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,11 @@ public class PotionController {
     private PotionRepository potionRepository;
     @Autowired
     private IngredientRepository ingredientRepository;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
     @GetMapping("/potion/add")
     public String potionDisplayAdd(Model model) {
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
