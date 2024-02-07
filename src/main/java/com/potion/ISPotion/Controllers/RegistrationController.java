@@ -2,8 +2,6 @@ package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.repo.UserRepository;
-import com.potion.ISPotion.utils.AuthUtils;
-import com.potion.ISPotion.utils.WebCamService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -44,7 +42,7 @@ public class RegistrationController {
             return "registration";
         }
         user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(Role.EMPLOYEE));
         userRepository.save(user);
         return "redirect:/login";
     }
@@ -63,7 +61,7 @@ public class RegistrationController {
             return "redirect:/users";
         }
         User user = userRepository.findById(id).orElseThrow();
-        user.getRoles().contains(Role.USER);
+        user.getRoles().contains(Role.EMPLOYEE);
         model.addAttribute("user", user );
         model.addAttribute("roles", Role.values() );
 

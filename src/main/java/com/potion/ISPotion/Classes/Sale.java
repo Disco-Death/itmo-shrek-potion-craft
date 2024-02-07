@@ -2,6 +2,8 @@ package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "sale")
 public class Sale {
@@ -19,6 +21,12 @@ public class Sale {
 
     @Column(length = 512, nullable = false)
     private String client;
+    private Date creationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        creationDate = new Date();
+    }
 
     public Sale() { }
 
@@ -67,5 +75,9 @@ public class Sale {
 
     public void setClient(String client) {
         this.client = client;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }
