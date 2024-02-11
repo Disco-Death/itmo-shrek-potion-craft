@@ -28,7 +28,7 @@ public class RegistrationController {
     @GetMapping("/home")
     public  String home(@CurrentSecurityContext(expression="authentication")
                             Authentication authentication,  Model model) throws IOException {
-
+        model.addAttribute("title", "Зельевар");
         return "home";
     }
     @GetMapping("/registration")

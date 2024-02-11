@@ -42,7 +42,7 @@ public class StorageController {
 
         model.addAttribute("cells", cells );
         model.addAttribute("records", records );
-        model.addAttribute("title", "Storage");
+        model.addAttribute("title", "Склад");
 
         return "storage";
     }
@@ -55,7 +55,7 @@ public class StorageController {
         model.addAttribute("ingredients", ingredients );
         model.addAttribute("potions", potions );
         model.addAttribute("entities", StorageEntity.values());
-        model.addAttribute("title", "Storage");
+        model.addAttribute("title", "Склад");
         return "storage-cell-add";
     }
 
@@ -95,7 +95,7 @@ public class StorageController {
         model.addAttribute("potions", potions );
         model.addAttribute("entities", StorageEntity.values());
         model.addAttribute("currentCell", currentCell );
-        model.addAttribute("title", "Storage");
+        model.addAttribute("title", "Склад");
         return "storage-cell-edit";
     }
     @PostMapping("/storage/edit/{id}")

@@ -29,7 +29,7 @@ public class PotionController {
     public String potionDisplayAdd(Model model) {
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
         model.addAttribute("ingredients", ingredients );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion-add";
     }
 
@@ -38,7 +38,7 @@ public class PotionController {
     public String potion(Model model) {
         Iterable<Potion> potions = potionRepository.findAll();
         model.addAttribute("potions", potions );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion";
     }
     @GetMapping("/potion/edit/{id}")
@@ -51,7 +51,7 @@ public class PotionController {
 
         model.addAttribute("ingredients", ingredients );
         model.addAttribute("potion", potion );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion-edit";
     }
     @PostMapping("/potion/edit/{id}")

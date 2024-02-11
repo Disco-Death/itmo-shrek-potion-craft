@@ -22,18 +22,19 @@ public class ReportController {
     public String report(Model model) {
         Iterable<Report> reports = reportRepository.findAll();
         model.addAttribute("reports", reports );
-        model.addAttribute("title", "reports");
+        model.addAttribute("title", "Отчеты");
         return "report";
     }
     @GetMapping("/report/{id}")
     public String reportDisplay(@PathVariable(value = "id") long id, Model model) {
         Report report = reportRepository.findById(id).orElseThrow();
         model.addAttribute("report", report );
-        model.addAttribute("title", "reports");
+        model.addAttribute("title", "Отчеты");
         return "report-details";
     }
     @GetMapping("/report/add")
     public String reportAddDisplay(Model model) {
+        model.addAttribute("title", "Отчеты");
         return "report-add";
     }
 
