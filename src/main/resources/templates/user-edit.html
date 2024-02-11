@@ -4,7 +4,8 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
-<p>Изменить данные пользователя</p>
+<div class="tab-container">
+<h2>Изменить данные пользователя</h2>
   <form method="post" class="form-group mt-2 mb-2 col-md-2">
     <label for="user-name">Имя пользователя</label>
     <input type="text" disabled="disabled" id="user-name" name="user-name" th:value="${user.username}" class="form-control border mt-2 mb-2 col-md-6">
@@ -28,5 +29,6 @@
     </div>
 
   </form>
+</div>
 </body>
 </html>

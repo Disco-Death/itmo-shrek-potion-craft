@@ -3,12 +3,22 @@
     <head th:insert="~{header :: links}"></head>
     <header th:insert="~{header :: header}"></header>
     <body class="container mt-5 mb-5">
-        <h1>Характер роста ИС:</h1>
-        <div>
-            <div th:each="stat : ${stats}" class="row align-items-start border border-success mt-2 mb-2">
-                <div th:text="${stat.Name}" class="col border "></div>
-                <div th:text="${stat.Value}"  class="col border "></div>
-            </div>
-        </div>
+    <div class="tab-container">
+        <h2>Характер роста ИС:</h2>
+        <table  class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="row">Название</th>
+                <th>Значение</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="el : ${stats}">
+                <th scope="row" th:text="${el.Name}" th:value="${el.Name}"></th>
+                <td th:text="${el.Value}"   th:value="${el.Value}" ></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     </body>
 </html>

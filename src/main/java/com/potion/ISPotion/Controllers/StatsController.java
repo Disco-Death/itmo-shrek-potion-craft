@@ -36,7 +36,7 @@ public class StatsController {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.SALES_DEPT,
                 Role.HEAD,
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
 

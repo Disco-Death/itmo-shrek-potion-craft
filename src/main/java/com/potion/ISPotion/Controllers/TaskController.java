@@ -53,7 +53,7 @@ public class TaskController {
                              @RequestParam String description, @RequestParam String username) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
 
@@ -81,7 +81,7 @@ public class TaskController {
                                  @PathVariable Long taskId) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
 
@@ -104,7 +104,7 @@ public class TaskController {
             // Проверяем роли для остальных статусов
             Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                     Role.HEAD,
-                    Role.MERLIN,
+                    Role.DIRECTOR,
                     Role.EMPLOYEE
             ));
 

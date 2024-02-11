@@ -77,6 +77,17 @@ public class Potion {
         this.ingredientsIds.remove(ingredientId);
     }
 
+    public String getIngredientsNames() {
+        String names = "";
+        for (Ingredient ingredient: this.ingredients
+             ) {
+            names += ingredient.getName() + ',';
+        }
+        if (names != null && names.length() > 0) {
+            names = names.substring(0, names.length() - 1);
+        }
+        return names;
+    }
     public Potion() {
 
     }

@@ -41,7 +41,7 @@ public class SaleController {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.SALES_DEPT,
                 Role.HEAD,
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
 
@@ -64,7 +64,7 @@ public class SaleController {
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.SALES_DEPT,
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
 
@@ -85,7 +85,7 @@ public class SaleController {
                                      Authentication authentication,
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
@@ -115,7 +115,7 @@ public class SaleController {
                           @RequestParam String client,
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
@@ -148,7 +148,7 @@ public class SaleController {
                                   @PathVariable(value = "id") long id,
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
@@ -183,7 +183,7 @@ public class SaleController {
                            @RequestParam String client,
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
@@ -239,7 +239,7 @@ public class SaleController {
                                  Authentication authentication,
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.MERLIN,
+                Role.DIRECTOR,
                 Role.EMPLOYEE
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(

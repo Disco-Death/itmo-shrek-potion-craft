@@ -4,28 +4,30 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
-<p>Изменить данные пользователя</p>
-  <form method="post" class="form-group mt-2 mb-2 col-md-2">
-    <label for="user-name">Имя пользователя</label>
-    <input type="text" id="user-name" required="required" name="user-name" class="form-control border mt-2 mb-2 col-md-6">
-    <label for="password">Новый пароль</label>
-    <input type="password" name="password" id="password"  required="required" placeholder="Введите пароль" class="form-control border mt-2 mb-2 col-md-6">
-    <label for="isActive">Статус -   </label>
-    <input type="checkbox" name="isActive" id="isActive"  class="form-check-input col-md-6"/><br><br>
-    <label for="roles">Роли пользователя</label><br>
-    <select name="roles" id="roles" class="form-select"  required="required"  multiple="multiple">
-      <option th:each="role : ${roles}"
-              th:value="${{role.name()}}"
-              th:text="${role.name()}"
-      >
-      </option>
-    </select>
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/><br><br>
-    <div  class="btn-group">
-      <a class="btn btn-primary btn-element" href="/users">Назад</a>
-      <button type="submit" class="btn btn-success btn-element">Добавить</button>
-    </div>
+<div class="tab-container">
+  <h2>Изменить данные пользователя</h2>
+    <form method="post" class="form-group mt-2 mb-2 col-md-2">
+      <label for="user-name">Имя пользователя</label>
+      <input type="text" id="user-name" required="required" name="user-name" class="form-control border mt-2 mb-2 col-md-6">
+      <label for="password">Новый пароль</label>
+      <input type="password" name="password" id="password"  required="required" placeholder="Введите пароль" class="form-control border mt-2 mb-2 col-md-6">
+      <label for="isActive">Статус -   </label>
+      <input type="checkbox" name="isActive" id="isActive"  class="form-check-input col-md-6"/><br><br>
+      <label for="roles">Роли пользователя</label><br>
+      <select name="roles" id="roles" class="form-select"  required="required"  multiple="multiple">
+        <option th:each="role : ${roles}"
+                th:value="${{role.name()}}"
+                th:text="${role.name()}"
+        >
+        </option>
+      </select>
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/><br><br>
+      <div  class="btn-group">
+        <a class="btn btn-primary btn-element" href="/users">Назад</a>
+        <button type="submit" class="btn btn-success btn-element">Добавить</button>
+      </div>
 
-  </form>
+    </form>
+</div>
 </body>
 </html>

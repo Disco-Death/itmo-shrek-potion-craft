@@ -4,38 +4,40 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
-<p>Изменить ячейку</p>
-  <form method="post" class="form-group mt-2 mb-2 col-md-2">
-    <select name="entity" class="form-control border mt-2 mb-2">
-      <option th:each="entity : ${entities}"
-              th:value="${{entity}}"
-              th:text="${entity}"
-              th:selected="${entity==currentCell.entity}"
-              th:disabled="${entity!=currentCell.entity}"
-      >
-      </option>
-    </select>
-    <select th:if="${currentCell.entity.name() == 'Ingredient'}" id="selectIngredient" name="ingredientId" class="form-control border mt-2 mb-2">
-      <option th:each="ingredient : ${ingredients}"
-              th:value="${{ingredient.id}}"
-              th:text="${ingredient.name}"
-              th:selected="${ingredient.id==currentCell.entity_id}"
-              th:disabled="${ingredient.id!=currentCell.entity_id}"
-      >
-      </option>
-    </select>
-    <select th:if="${currentCell.entity.name() == 'Potion'}" id="selectPotion" name="potionId" class="form-control border mt-2 mb-2">
-      <option th:each="potion : ${potions}"
-              th:value="${{potion.id}}"
-              th:text="${potion.name}"
-              th:selected="${potion.id==currentCell.entity_id}"
-              th:disabled="${potion.id!=currentCell.entity_id}"
-      >
-      </option>
-    </select>
-    <input type="text" name="quantity" th:value="${currentCell.quantity}" placeholder="Введите кол-во" class="form-control border mt-2 mb-2 col-md-6">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    <button type="submit" class="btn btn-success">Обновить ингредиент</button>
-  </form>
+<div class="tab-container">
+  <h2>Изменить ячейку</h2>
+    <form method="post" class="form-group mt-2 mb-2 col-md-2">
+      <select name="entity" class="form-control border mt-2 mb-2">
+        <option th:each="entity : ${entities}"
+                th:value="${{entity}}"
+                th:text="${entity}"
+                th:selected="${entity==currentCell.entity}"
+                th:disabled="${entity!=currentCell.entity}"
+        >
+        </option>
+      </select>
+      <select th:if="${currentCell.entity.name() == 'Ingredient'}" id="selectIngredient" name="ingredientId" class="form-control border mt-2 mb-2">
+        <option th:each="ingredient : ${ingredients}"
+                th:value="${{ingredient.id}}"
+                th:text="${ingredient.name}"
+                th:selected="${ingredient.id==currentCell.entity_id}"
+                th:disabled="${ingredient.id!=currentCell.entity_id}"
+        >
+        </option>
+      </select>
+      <select th:if="${currentCell.entity.name() == 'Potion'}" id="selectPotion" name="potionId" class="form-control border mt-2 mb-2">
+        <option th:each="potion : ${potions}"
+                th:value="${{potion.id}}"
+                th:text="${potion.name}"
+                th:selected="${potion.id==currentCell.entity_id}"
+                th:disabled="${potion.id!=currentCell.entity_id}"
+        >
+        </option>
+      </select>
+      <input type="text" name="quantity" th:value="${currentCell.quantity}" placeholder="Введите кол-во" class="form-control border mt-2 mb-2 col-md-6">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <button type="submit" class="btn btn-success">Обновить ингредиент</button>
+    </form>
+</div>
 </body>
 </html>

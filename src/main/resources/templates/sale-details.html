@@ -3,6 +3,7 @@
     <head th:insert="~{header :: links}"></head>
     <header th:insert="~{header :: header}"></header>
     <body class="container mt-5 mb-5">
+    <div class="tab-container">
         <div>
             <div th:text="${sale.id}"></div>
             <div th:text="${sale.potion.name}"></div>
@@ -10,5 +11,6 @@
             <div th:text="${sale.price}"></div>
             <div th:text="${sale.client}"></div>
         </div>
+    </div>
     </body>
 </html>
