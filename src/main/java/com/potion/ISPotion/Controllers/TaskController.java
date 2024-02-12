@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,6 +39,10 @@ public class TaskController {
     public String getAllTasks(Model model) {
         List<Task> tasks = taskRepository.findAll();
         model.addAttribute("tasks", tasks);
+
+        List<Task> directorTasks = taskService.getDirectorTasks();
+        model.addAttribute("directorTasks", directorTasks);
+
         return "task";
     }
 
@@ -47,10 +53,17 @@ public class TaskController {
         return "task";
     }
 
+    @GetMapping("/director/tasks")
+    public String getDirectorTasks(Model model) {
+        List<Task> directorTasks = taskService.getDirectorTasks();
+        model.addAttribute("directorTasks", directorTasks);
+        return "director-tasks";
+    }
+
     @PostMapping("/new")
-    public String createTask(@CurrentSecurityContext(expression = "authentication")
-                             Authentication authentication,
-                             @RequestParam String description, @RequestParam String username) {
+    public String createTask(@CurrentSecurityContext(expression = "authentication") Authentication authentication,
+                             @RequestParam String description, @RequestParam String username,
+                             @RequestParam String deadline) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.ADMIN,
                 Role.DIRECTOR,
@@ -66,6 +79,10 @@ public class TaskController {
         Task task = new Task();
         task.setDescription(description);
 
+        // Установка крайнего срока
+        LocalDateTime deadlineDateTime = LocalDateTime.parse(deadline, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+        task.setDeadline(deadlineDateTime);
+
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new RuntimeException("Пользователь с именем " + username + " не найден");
@@ -73,6 +90,7 @@ public class TaskController {
 
         task.setUser(user);
         task.setStatus(TaskStatus.ASSIGNED);
+        task.setCreatedAt(LocalDateTime.now()); // Установка времени создания задания
         taskRepository.save(task);
         return "redirect:/tasks";
     }
@@ -105,7 +123,6 @@ public class TaskController {
         if ("STARTED".equals(newStatus) || "SENT_FOR_REVIEW".equals(newStatus)) {
             task.setStatus(TaskStatus.valueOf(newStatus));
         } else {
-            // Проверяем роли для остальных статусов
             Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                     Role.ADMIN,
                     Role.DIRECTOR,

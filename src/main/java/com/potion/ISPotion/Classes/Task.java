@@ -2,6 +2,8 @@ package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Task {
 
@@ -17,6 +19,14 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
+    private LocalDateTime deadline;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_director_task")
+    private boolean isDirectorTask;
 
     public Long getId() {
         return id;
@@ -48,5 +58,29 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isDirectorTask() {
+        return isDirectorTask;
+    }
+
+    public void setDirectorTask(boolean directorTask) {
+        isDirectorTask = directorTask;
     }
 }
