@@ -94,4 +94,29 @@ public class IngredientControllerTest {
         assertEquals(ingredient.getName(), capturedPotion.getName());
         assertEquals(ingredient.getProperty(), capturedPotion.getProperty());
     }
+
+    @Test
+    public void testIngredientDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(ingredientRepository.existsById(anyLong())).thenReturn(true);
+
+        mockMvc.perform(post("/ingredient/delete/1")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/ingredient"))
+                .andExpect(view().name("redirect:/ingredient"));
+
+        var ingredientIdCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(ingredientRepository).deleteById(ingredientIdCaptor.capture());
+
+        var capturedIngredientId = ingredientIdCaptor.getValue();
+        assertEquals(1, capturedIngredientId);
+    }
 }

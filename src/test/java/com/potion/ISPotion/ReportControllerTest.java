@@ -111,4 +111,29 @@ public class ReportControllerTest {
         assertEquals(report.getTitle(), capturedReport.getTitle());
         assertEquals(report.getSubject(), capturedReport.getSubject());
     }
+
+    @Test
+    public void testStorageDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(reportRepository.existsById(anyLong())).thenReturn(true);
+
+        mockMvc.perform(post("/report/delete/1")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/report"))
+                .andExpect(view().name("redirect:/report"));
+
+        var reportIdCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(reportRepository).deleteById(reportIdCaptor.capture());
+
+        var capturedReportId = reportIdCaptor.getValue();
+        assertEquals(1, capturedReportId);
+    }
 }

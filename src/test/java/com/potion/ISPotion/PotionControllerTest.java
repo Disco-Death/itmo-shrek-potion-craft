@@ -120,4 +120,29 @@ public class PotionControllerTest {
         var capturedPotion = potionCaptor.getValue();
         assertEquals(potion.getIngredientsIds(), capturedPotion.getIngredientsIds());
     }
+
+    @Test
+    public void testPotionDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(potionRepository.existsById(anyLong())).thenReturn(true);
+
+        mockMvc.perform(post("/potion/delete/1")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/potion"))
+                .andExpect(view().name("redirect:/potion"));
+
+        var potionIdCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(potionRepository).deleteById(potionIdCaptor.capture());
+
+        var capturedPotionId = potionIdCaptor.getValue();
+        assertEquals(1, capturedPotionId);
+    }
 }

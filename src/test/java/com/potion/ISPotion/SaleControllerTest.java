@@ -155,7 +155,6 @@ public class SaleControllerTest {
         when(saleRepository.findById(anyLong())).thenReturn(Optional.of(sale));
 
         mockMvc.perform(post("/sale/delete/1")
-                        .param("id", sale.getId().toString())
                         .with(user(user.getUsername()).roles(user.getRoles().toString()))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())

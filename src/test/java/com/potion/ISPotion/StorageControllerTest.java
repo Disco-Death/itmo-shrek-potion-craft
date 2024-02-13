@@ -14,9 +14,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -154,5 +156,42 @@ public class StorageControllerTest {
         assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
         assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
         assertEquals(0, capturedStorageCell.getTestApproved());
+    }
+
+    @Test
+    public void testStorageDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var storageCell = new StorageCell();
+        storageCell.setId(1L);
+        storageCell.setEntity(StorageEntity.Potion);
+        storageCell.setQuantity(100L);
+        storageCell.setEntity_id(2L);
+        storageCell.setTestApproved(1);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(storageCellRepository.existsById(anyLong())).thenReturn(true);
+        when(storageCellRepository.findById(anyLong())).thenReturn(Optional.of(storageCell));
+
+        mockMvc.perform(post("/storage/delete/1")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/storage"))
+                .andExpect(view().name("redirect:/storage"));
+
+        var storageCellCaptor = ArgumentCaptor.forClass(StorageCell.class);
+        verify(storageService).storageCellRemove(storageCellCaptor.capture());
+
+        var capturedStorageCell = storageCellCaptor.getValue();
+        assertEquals(storageCell.getId(), capturedStorageCell.getId());
+        assertEquals(storageCell.getQuantity(), capturedStorageCell.getQuantity());
+        assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
+        assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
+        assertEquals(storageCell.getTestApproved(), capturedStorageCell.getTestApproved());
     }
 }
