@@ -2,10 +2,7 @@ package com.potion.ISPotion;
 
 import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.StorageController;
-import com.potion.ISPotion.repo.IngredientRepository;
-import com.potion.ISPotion.repo.PotionRepository;
-import com.potion.ISPotion.repo.StorageCellRepository;
-import com.potion.ISPotion.repo.StorageRecordRepository;
+import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.StorageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,6 +41,8 @@ public class StorageControllerTest {
 
     @MockBean
     private StorageService storageService;
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void testStorageWithAllowedRole() throws Exception {
@@ -66,6 +66,7 @@ public class StorageControllerTest {
         record2.setDate_add(Instant.EPOCH);
         record2.setDate_upd(Instant.EPOCH);
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(storageCellRepository.findAll()).thenReturn(Arrays.asList(cell1, cell2));
         when(storageRecordRepository.findAll()).thenReturn(Arrays.asList(record1, record2));
 

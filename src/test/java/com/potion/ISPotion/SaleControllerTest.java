@@ -36,16 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SaleControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private SaleRepository saleRepository;
-
     @MockBean
     private PotionRepository potionRepository;
-
     @MockBean
     private UserRepository userRepository;
-
     @MockBean
     private StorageService storageService;
 
@@ -64,7 +60,7 @@ public class SaleControllerTest {
         Sale sale2 = new Sale(); // Создание объекта Sale
         sale2.setPotion(potion);
 
-        when(userRepository.findByUsername(anyString())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(saleRepository.findAll()).thenReturn(Arrays.asList(sale1, sale2)); // Мокирование метода findAll() репозитория продаж
 
         mockMvc.perform(get("/sale")
@@ -80,10 +76,10 @@ public class SaleControllerTest {
         User user = new User(); // Создание пользователя
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.TEST_DEPT);
+        userRoles.add(Role.EMPLOYEE);
         user.setRoles(userRoles); // Установка роли пользователя
 
-        when(userRepository.findByUsername(anyString())).thenReturn(user); // Мокирование метода findById() репозитория пользователя
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         mockMvc.perform(get("/sale")
                 .with(user(user.getUsername()).roles(user.getRoles().toString())))

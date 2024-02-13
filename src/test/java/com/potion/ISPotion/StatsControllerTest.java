@@ -3,6 +3,7 @@ package com.potion.ISPotion;
 import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.Stat;
 import com.potion.ISPotion.Classes.User;
+import com.potion.ISPotion.Controllers.StatsController;
 import com.potion.ISPotion.repo.UserRepository;
 import com.potion.ISPotion.utils.StatsComponent;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@WebMvcTest(value= StatControllerTest.class)
-public class StatControllerTest {
+@WebMvcTest(value= StatsController.class)
+public class StatsControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -31,6 +32,7 @@ public class StatControllerTest {
     @MockBean
     private StatsComponent statsComponent;
 
+    @Test
     public void testStatsWithAllowedRole() throws Exception {
         var user = new User();
         user.setUsername("Test username");
@@ -50,5 +52,21 @@ public class StatControllerTest {
                 .andExpect(view().name("stats"))
                 .andExpect(model().attributeExists("title"))
                 .andExpect(model().attribute("stats", hasSize(2)));
+    }
+
+    @Test
+    public void testStatsWithNotAllowedRole() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.EMPLOYEE);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        mockMvc.perform(get("/stats")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
     }
 }

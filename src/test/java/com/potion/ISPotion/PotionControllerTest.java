@@ -4,6 +4,7 @@ import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.PotionController;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
+import com.potion.ISPotion.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PotionControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private PotionRepository potionRepository;
-
     @MockBean
     private IngredientRepository ingredientRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void testPotionWithAllowedRole() throws Exception {
@@ -56,6 +57,7 @@ public class PotionControllerTest {
         potion2.setName("test potion name 2");
         potion2.setIngredients(Collections.singletonList(ingredient));
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(potionRepository.findAll()).thenReturn(Arrays.asList(potion1, potion2));
 
         mockMvc.perform(get("/potion")
@@ -64,6 +66,22 @@ public class PotionControllerTest {
                 .andExpect(view().name("potion"))
                 .andExpect(model().attributeExists("title"))
                 .andExpect(model().attribute("potions", hasSize(2)));
+    }
+
+    @Test
+    public void testPotionWithNotAllowedRole() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.EMPLOYEE);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        mockMvc.perform(get("/potion")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
     }
 
     @Test
@@ -84,6 +102,7 @@ public class PotionControllerTest {
         ingredientsIds.add(ingredient.getId());
         potion.setIngredientsIds(ingredientsIds);
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(ingredientRepository.findById(anyLong())).thenReturn(Optional.of(ingredient));
 
         mockMvc.perform(post("/potion/add")

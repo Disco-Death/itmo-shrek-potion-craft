@@ -46,7 +46,6 @@ public class SaleController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -66,6 +65,7 @@ public class SaleController {
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.ADMIN,
+                Role.SALES_DEPT,
                 Role.HEAD,
                 Role.MERLIN
         ));
@@ -88,6 +88,7 @@ public class SaleController {
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.ADMIN,
+                Role.SALES_DEPT,
                 Role.HEAD,
                 Role.MERLIN
         ));
@@ -115,6 +116,7 @@ public class SaleController {
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.ADMIN,
+                Role.SALES_DEPT,
                 Role.HEAD,
                 Role.MERLIN
         ));

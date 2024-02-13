@@ -6,6 +6,7 @@ import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.Controllers.IngredientController;
 import com.potion.ISPotion.repo.IngredientRepository;
+import com.potion.ISPotion.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -34,9 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IngredientControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private IngredientRepository ingredientRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void testIngredientWithAllowedRole() throws Exception {
@@ -49,6 +52,7 @@ public class IngredientControllerTest {
         Ingredient ingredient1 = new Ingredient();
         Ingredient ingredient2 = new Ingredient();
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(ingredientRepository.findAll()).thenReturn(Arrays.asList(ingredient1, ingredient2));
 
         mockMvc.perform(get("/ingredient")
@@ -71,6 +75,8 @@ public class IngredientControllerTest {
         ingredient.setId(1L);
         ingredient.setName("test name");
         ingredient.setProperty("test property");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         mockMvc.perform(post("/ingredient/add")
                         .param("name", ingredient.getName())

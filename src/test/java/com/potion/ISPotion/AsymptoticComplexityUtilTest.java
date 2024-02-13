@@ -17,7 +17,7 @@ public class AsymptoticComplexityUtilTest {
                 new AsymptoticComplexityUtil.DataPoint(5, 25)
         );
 
-        var expected = "Сложность: O(n^2) [квадратичная], Величина ошибки = 0,000000";
+        var expected = "Рост: O(n^2) [квадратичный], мин. ошибка: 0,000000";
 
         var actual = AsymptoticComplexityUtil.getAsymptoticComplexity(timeSeries);
 

@@ -3,6 +3,7 @@ package com.potion.ISPotion;
 import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.ReportController;
 import com.potion.ISPotion.repo.ReportRepository;
+import com.potion.ISPotion.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -31,9 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private ReportRepository reportRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void testReportWithAllowedRole() throws Exception {
@@ -46,6 +49,7 @@ public class ReportControllerTest {
         Report report1 = new Report();
         Report report2 = new Report();
 
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(reportRepository.findAll()).thenReturn(Arrays.asList(report1, report2));
 
         mockMvc.perform(get("/report")
@@ -54,6 +58,22 @@ public class ReportControllerTest {
                 .andExpect(view().name("report"))
                 .andExpect(model().attributeExists("title"))
                 .andExpect(model().attribute("reports", hasSize(2)));
+    }
+
+    @Test
+    public void testReportWithNotAllowedRole() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.EMPLOYEE);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        mockMvc.perform(get("/report/1")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
     }
 
     @Test
@@ -70,6 +90,8 @@ public class ReportControllerTest {
         report.setBody("test body");
         report.setTitle("test title");
         report.setSubject("test subject");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         mockMvc.perform(post("/report/add")
                         .param("title", report.getTitle())
