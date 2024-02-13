@@ -64,6 +64,22 @@ public class IngredientControllerTest {
     }
 
     @Test
+    public void testIngredientWithNotAllowedRole() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.EMPLOYEE);
+        user.setRoles(userRoles);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        mockMvc.perform(get("/ingredient")
+                        .with(user(user.getUsername()).roles(user.getRoles().toString())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
+    }
+
+    @Test
     public void testIngredientAdd() throws Exception {
         var user = new User();
         user.setUsername("Test username");
@@ -93,6 +109,44 @@ public class IngredientControllerTest {
         var capturedPotion = ingredientCaptor.getValue();
         assertEquals(ingredient.getName(), capturedPotion.getName());
         assertEquals(ingredient.getProperty(), capturedPotion.getProperty());
+    }
+
+    @Test
+    public void testIngredientEdit() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var ingredient = new Ingredient();
+        ingredient.setId(1L);
+        ingredient.setName("Old Name");
+        ingredient.setProperty("Old property");
+
+        var newName = "New name";
+        var newProperty = "New property";
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(ingredientRepository.existsById(anyLong())).thenReturn(true);
+        when(ingredientRepository.findById(anyLong())).thenReturn(Optional.of(ingredient));
+
+        mockMvc.perform(post("/ingredient/edit/1")
+                        .param("name", newName)
+                        .param("property", newProperty)
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/ingredient"))
+                .andExpect(view().name("redirect:/ingredient"));
+
+        var ingredientCaptor = ArgumentCaptor.forClass(Ingredient.class);
+        verify(ingredientRepository).save(ingredientCaptor.capture());
+
+        var capturedIngredient = ingredientCaptor.getValue();
+        assertEquals(ingredient.getId(), capturedIngredient.getId());
+        assertEquals(newName, capturedIngredient.getName());
+        assertEquals(newProperty, capturedIngredient.getProperty());
     }
 
     @Test

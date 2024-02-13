@@ -4,6 +4,7 @@ import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.StorageController;
 import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.StorageService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,6 +157,40 @@ public class StorageControllerTest {
         assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
         assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
         assertEquals(0, capturedStorageCell.getTestApproved());
+    }
+
+    @Test
+    public void testStorageEdit() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var storageCell = new StorageCell();
+        storageCell.setId(1L);
+        storageCell.setQuantity(100L);
+
+        var newStorageCellQuantity = 101L;
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(storageCellRepository.existsById(anyLong())).thenReturn(true);
+        when(storageCellRepository.findById(anyLong())).thenReturn(Optional.of(storageCell));
+
+        mockMvc.perform(post("/storage/edit/1")
+                        .param("quantity", Long.toString(newStorageCellQuantity))
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/storage"))
+                .andExpect(view().name("redirect:/storage"));
+
+        var storageCellCaptor = ArgumentCaptor.forClass(StorageCell.class);
+        var storageCellQuantityCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(storageService).storageCellUpdate(storageCellCaptor.capture(), storageCellQuantityCaptor.capture());
+
+        var capturedStorageCellQuantuty = storageCellQuantityCaptor.getValue();
+        assertEquals(newStorageCellQuantity, capturedStorageCellQuantuty);
     }
 
     @Test

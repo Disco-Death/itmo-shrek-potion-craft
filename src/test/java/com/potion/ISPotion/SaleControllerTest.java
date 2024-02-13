@@ -1,9 +1,6 @@
 package com.potion.ISPotion;
 
-import com.potion.ISPotion.Classes.Potion;
-import com.potion.ISPotion.Classes.Role;
-import com.potion.ISPotion.Classes.Sale;
-import com.potion.ISPotion.Classes.User;
+import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.SaleController;
 import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
@@ -25,9 +22,9 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -129,6 +126,60 @@ public class SaleControllerTest {
         assertEquals(sale.getQuantity(), capturedSale.getQuantity());
         assertEquals(sale.getPrice(), capturedSale.getPrice());
         assertEquals(sale.getClient(), capturedSale.getClient());
+    }
+
+    @Test
+    public void testSaleEdit() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var sale = new Sale();
+        sale.setId(1L);
+        sale.setQuantity(100L);
+        sale.setPrice(100L);
+        sale.setClient("Old client");
+
+        var oldPotion = new Potion();
+        oldPotion.setId(3L);
+
+        sale.setPotion(oldPotion);
+
+        long newQuantity = 101L;
+        long newPrice = 99L;
+        var newClient = "New client";
+        var newPotion = new Potion();
+        newPotion.setId(2L);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(saleRepository.existsById(anyLong())).thenReturn(true);
+        when(potionRepository.existsById(anyLong())).thenReturn(true);
+        when(storageService.takePotionsFromStorageForSaleByPotionId(anyLong(), anyLong())).thenReturn(true);
+        when(saleRepository.findById(anyLong())).thenReturn(Optional.of(sale));
+        when(potionRepository.findById(anyLong())).thenReturn(Optional.of(newPotion));
+
+        mockMvc.perform(post("/sale/edit/1")
+                        .param("potionId", newPotion.getId().toString())
+                        .param("quantity", Long.toString(newQuantity))
+                        .param("price", Long.toString(newPrice))
+                        .param("client", newClient)
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/sale"))
+                .andExpect(view().name("redirect:/sale"));
+
+        var saleCaptor = ArgumentCaptor.forClass(Sale.class);
+        verify(saleRepository).save(saleCaptor.capture());
+
+        var capturedSale = saleCaptor.getValue();
+        assertEquals(sale.getId(), capturedSale.getId());
+        assertEquals(newQuantity, capturedSale.getQuantity());
+        assertEquals(newPrice, capturedSale.getPrice());
+        assertEquals(newClient, capturedSale.getClient());
+        assertEquals(newPotion, capturedSale.getPotion());
     }
 
     @Test

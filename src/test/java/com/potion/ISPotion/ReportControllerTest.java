@@ -113,6 +113,48 @@ public class ReportControllerTest {
     }
 
     @Test
+    public void testReportDelete() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var report = new Report();
+        report.setId(1L);
+        report.setTitle("Old title");
+        report.setSubject("Old subject");
+        report.setBody("Old body");
+
+        var newTitle = "New title";
+        var newSubject = "New subject";
+        var newBody = "New body";
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(reportRepository.existsById(anyLong())).thenReturn(true);
+        when(reportRepository.findById(anyLong())).thenReturn(Optional.of(report));
+
+        mockMvc.perform(post("/report/edit/1")
+                        .param("title", newTitle)
+                        .param("subject", newSubject)
+                        .param("body", newBody)
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/report"))
+                .andExpect(view().name("redirect:/report"));
+
+        var reportCaptor = ArgumentCaptor.forClass(Report.class);
+        verify(reportRepository).save(reportCaptor.capture());
+
+        var capturedReport = reportCaptor.getValue();
+        assertEquals(report.getId(), capturedReport.getId());
+        assertEquals(newTitle, capturedReport.getTitle());
+        assertEquals(newSubject, capturedReport.getSubject());
+        assertEquals(newBody, capturedReport.getBody());
+    }
+
+    @Test
     public void testStorageDelete() throws Exception {
         var user = new User();
         user.setUsername("Test username");

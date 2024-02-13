@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -119,6 +120,56 @@ public class PotionControllerTest {
 
         var capturedPotion = potionCaptor.getValue();
         assertEquals(potion.getIngredientsIds(), capturedPotion.getIngredientsIds());
+    }
+
+    @Test
+    public void testPotionEdit() throws Exception {
+        var user = new User();
+        user.setUsername("Test username");
+        var userRoles = new HashSet<Role>();
+        userRoles.add(Role.HEAD);
+        user.setRoles(userRoles);
+
+        var potion = new Potion();
+        potion.setId(1L);
+        potion.setName("Old potion name");
+
+        var oldIngredient = new Ingredient();
+        oldIngredient.setId(1L);
+        oldIngredient.setName("Old ingredient Name");
+        oldIngredient.setProperty("Old ingredient property");
+
+        potion.setIngredientsIds(new ArrayList<>(Collections.singletonList(oldIngredient.getId())));
+        potion.setIngredients(Collections.singletonList(oldIngredient));
+
+        var newName = "New name";
+
+        var newIngredient = new Ingredient();
+        oldIngredient.setId(2L);
+        oldIngredient.setName("New ingredient Name");
+        oldIngredient.setProperty("New ingredient property");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(potionRepository.existsById(anyLong())).thenReturn(true);
+        when(ingredientRepository.findById(anyLong())).thenReturn(Optional.of(newIngredient));
+        when(potionRepository.findById(anyLong())).thenReturn(Optional.of(potion));
+
+        mockMvc.perform(post("/potion/edit/1")
+                        .param("ingredientsIds", "2")
+                        .param("name", newName)
+                        .with(user(user.getUsername()).roles(user.getRoles().toString()))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/potion"))
+                .andExpect(view().name("redirect:/potion"));
+
+        var potionCaptor = ArgumentCaptor.forClass(Potion.class);
+        verify(potionRepository).save(potionCaptor.capture());
+
+        var capturedPotion = potionCaptor.getValue();
+        assertEquals(potion.getId(), capturedPotion.getId());
+        assertEquals(newName, capturedPotion.getName());
+        assertEquals("[2]", capturedPotion.getIngredientsIds().toString());
     }
 
     @Test
