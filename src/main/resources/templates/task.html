@@ -11,6 +11,13 @@
 <div class="container mt-5">
     <h2>Задачник</h2>
 
+    <div class="form-group">
+        <label for="directorTasks">Задачи на ревью:</label>
+        <select class="form-control" id="directorTasks" name="directorTasks">
+            <option th:each="directorTask : ${directorTasks}" th:value="${directorTask.id}" th:text="${directorTask.description}"></option>
+        </select>
+    </div>
+
     <form th:action="@{/tasks/new}" method="post">
         <div class="form-group">
             <label for="description">Описание задачи:</label>
@@ -19,6 +26,10 @@
         <div class="form-group">
             <label for="username">Назначте пользователя:</label>
             <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Крайний срок:</label>
+            <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
         </div>
         <div class="form-group">
             <label for="status">Выберите статус:</label>
@@ -31,7 +42,7 @@
                 <option value="ACCEPT_COMPLETED">Завершено и принято</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Create Task</button>
+        <button type="submit" class="btn btn-primary">Создать задачу</button>
     </form>
 
     <hr>
@@ -41,6 +52,7 @@
         <li th:each="task : ${tasks}" class="list-group-item">
             <span th:text="${task.description}"></span> (User: <span th:text="${task.user.username}"></span>)
             <span>Status: <span th:text="${task.status}"></span></span>
+            <span>Deadline: <span th:text="${#temporals.format(task.deadline, 'yyyy-MM-dd HH:mm')}"></span></span>
 
             <form th:action="@{'/tasks/' + ${task.id} + '/changeStatus'}" method="post" style="display:inline;">
                 <select class="form-control" name="newStatus">
@@ -56,10 +68,10 @@
             </form>
 
 
-           <form th:action="@{'/tasks/' + ${task.id}}" method="post" style="display:inline;">
+            <form th:action="@{'/tasks/' + ${task.id}}" method="post" style="display:inline;">
                 <input type="hidden" name="_method" value="delete"/>
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-           </form>
+            </form>
 
         </li>
     </ul>

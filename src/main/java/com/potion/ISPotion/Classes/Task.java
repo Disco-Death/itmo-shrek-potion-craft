@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Task {
 
@@ -25,6 +27,14 @@ public class Task {
     protected void onCreate() {
         creationDate = new Date();
     }
+
+    private LocalDateTime deadline;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_director_task")
+    private boolean isDirectorTask;
 
     public Long getId() {
         return id;
@@ -60,5 +70,29 @@ public class Task {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isDirectorTask() {
+        return isDirectorTask;
+    }
+
+    public void setDirectorTask(boolean directorTask) {
+        isDirectorTask = directorTask;
     }
 }
