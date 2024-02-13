@@ -23,6 +23,7 @@ public class IngredientController {
 
     @GetMapping("/ingredient/add")
     public String ingredientDisplayAdd(Model model) {
+        model.addAttribute("title", "Ингредиенты");
         return "ingredient-add";
     }
 
@@ -31,7 +32,7 @@ public class IngredientController {
     public String ingredient(Model model) {
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
         model.addAttribute("ingredients", ingredients );
-        model.addAttribute("title", "ingredient");
+        model.addAttribute("title", "Ингредиенты");
         return "ingredient";
     }
     @GetMapping("/ingredient/edit/{id}")
@@ -41,7 +42,7 @@ public class IngredientController {
         }
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow();
         model.addAttribute("ingredient", ingredient );
-        model.addAttribute("title", "ingredient");
+        model.addAttribute("title", "Ингредиенты");
         return "ingredient-edit";
     }
     @PostMapping("/ingredient/edit/{id}")

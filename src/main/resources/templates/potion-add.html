@@ -4,10 +4,11 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
-<p>Добавить Зелье:</h1>
+<div class="tab-container">
+<h2>Добавить Зелье:</h2>
 <form action="/potion/add" method="post" class="form-group mt-2 mb-2">
     <input type="text" name="name" placeholder="Введите название зелья" class="form-control border mt-2 mb-2 col-md-6">
-    <select name="ingredientsIds"  multiple="multiple">
+    <select name="ingredientsIds"  class="form-select" multiple="multiple">
         <option th:each="ingredient : ${ingredients}"
                 th:value="${{ingredient.id}}"
                 th:text="${ingredient.name}">
@@ -16,5 +17,6 @@
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <button type="submit" class="btn btn-success">Добавить ингредиент</button>
 </form>
+</div>
 </body>
 </html>

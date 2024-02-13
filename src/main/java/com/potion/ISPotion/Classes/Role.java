@@ -1,7 +1,8 @@
 package com.potion.ISPotion.Classes;
 
 public enum Role {
-    MERLIN,
+    ADMIN,
+    DIRECTOR,
     HEAD,
     PICKING_DEPT,
     POTIONS_MAKING_DEPT,

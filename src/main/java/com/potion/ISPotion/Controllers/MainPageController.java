@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class MainPageController {
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("title", "home");
+        model.addAttribute("title", "Зельевар");
         return "home";
     }
 

@@ -1,4 +1,6 @@
 <div th:fragment="header">
+  <div class="overlay-main"></div>
+  <div class="overlay-menu"></div>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a th:classappend="${requestURI.contains('/ingredient')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/ingredient">Ингредиенты</a>
     <a th:classappend="${requestURI.contains('/potion')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/potion">Зелья</a>
@@ -9,7 +11,7 @@
     <a th:classappend="${requestURI.contains('/users')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/users">Пользователи</a>
     <a th:classappend="${requestURI.contains('/stats')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Статистика</a>
     <a class="flex-sm-fill text-sm-center nav-link last" href="/logout"><form th:action="@{/logout}" method="post">
-      <input class="btn btn-warning btn-block" type="submit" value="Sign Out"/>
+      <input class="btn btn-out btn-block" type="submit" value="Выйти"/>
     </form></a>
   </nav>
 </div>

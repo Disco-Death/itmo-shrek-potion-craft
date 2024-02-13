@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Controller
 public class PotionController {
@@ -28,7 +29,7 @@ public class PotionController {
     public String potionDisplayAdd(Model model) {
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
         model.addAttribute("ingredients", ingredients );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion-add";
     }
 
@@ -37,7 +38,7 @@ public class PotionController {
     public String potion(Model model) {
         Iterable<Potion> potions = potionRepository.findAll();
         model.addAttribute("potions", potions );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion";
     }
     @GetMapping("/potion/edit/{id}")
@@ -50,23 +51,37 @@ public class PotionController {
 
         model.addAttribute("ingredients", ingredients );
         model.addAttribute("potion", potion );
-        model.addAttribute("title", "potion");
+        model.addAttribute("title", "Зелья");
         return "potion-edit";
     }
     @PostMapping("/potion/edit/{id}")
-    public String potionEdit(@PathVariable(value = "id") long id, @RequestParam String name, @RequestParam String property, Model model) {
+    public String potionEdit(@PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
         if (!potionRepository.existsById(id)) {
             return "redirect:/potion";
         }
+        String[] ingredientsIds = request.getParameterValues("ingredientsIds");
+        String name = Arrays.toString(request.getParameterValues("name")).replace("[", "").replace("]", "");
+
+        ArrayList<Long> newIngredientIds = new ArrayList<Long>();
+        ArrayList<Ingredient> newIngredients = new ArrayList<Ingredient>();
+        for (String ingredientsId : ingredientsIds) {
+            newIngredientIds.add(Long.parseLong(ingredientsId));
+            newIngredients.add(ingredientRepository.findById(Long.parseLong(ingredientsId)).orElseThrow());
+        }
         Potion potion = potionRepository.findById(id).orElseThrow();
         potion.setName(name);
-        //potion.setProperty(property);
+        potion.setIngredients(newIngredients);
+        potion.setIngredientsIds(newIngredientIds);
+
         potionRepository.save(potion);
         return "redirect:/potion";
     }
 
     @PostMapping("/potion/add")
-    public String potionAdd(@RequestParam String name, @RequestParam String[] ingredientsIds, Model model) {
+    public String potionAdd( HttpServletRequest request, Model model) {
+        String[] ingredientsIds = request.getParameterValues("ingredientsIds");
+        String name = Arrays.toString(request.getParameterValues("name")).replace("[", "").replace("]", "");
+
         ArrayList<Long> ids = new ArrayList<Long>();
         ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
         for (String ingredientId: ingredientsIds) {

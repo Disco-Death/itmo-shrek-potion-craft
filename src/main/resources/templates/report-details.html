@@ -4,10 +4,12 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
+<div class="tab-container">
 <div>
   <h1 th:text="${report.title}"></h1>
   <h2 th:text="${report.subject}"></h2>
   <div th:text="${report.body}"></div>
+</div>
 </div>
 </body>
 </html>

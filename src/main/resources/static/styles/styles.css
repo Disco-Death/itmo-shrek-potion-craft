@@ -1,5 +1,5 @@
-.login-container {
-    margin: 10% 0%;
+.row.login-container {
+    margin: 10% 0 0 0;
 }
 #video {
   border: 1px solid black;
@@ -56,8 +56,9 @@
 }
 
 .btn {
-    padding: 0.1rem 0.2rem !important;
-    font-size: 0.95rem  !important;
+    padding: 0.2rem 1em !important;
+    font-size: 0.95rem !important;
+    border-radius: 25px;
 }
 
 header {
@@ -67,15 +68,18 @@ header {
 .bg-light {
     border-radius: 25px;
     background: linear-gradient(to bottom right, #0000ff5c, #ffc0cb75);
+    border: #151515 1px solid;
 }
 
+
 .nav-link:focus, .nav-link:hover, .nav-link.active {
-    color: #ca0a0a;
+    color: #ca0a0a !important;
 }
 
 a.flex-sm-fill.text-sm-center.nav-link {
     text-align: center!important;
     border-right: 1px solid black;
+    color: #151515;
 }
 
 a.flex-sm-fill.text-sm-center.nav-link {
@@ -85,4 +89,81 @@ a.flex-sm-fill.text-sm-center.nav-link {
 
 a.flex-sm-fill.text-sm-center.nav-link.last{
     border-right: none !important;
+}
+
+.alert.alert-primary {
+    padding: 0.2rem 0.8rem;
+    text-align: center;
+    width: max-content;
+    margin: 0;
+}
+
+.overlay-menu {
+    position: absolute;
+    top: 0%;
+    left: 7%;
+    background: url(/images/bottles.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 256px;
+    height: 256px;
+    z-index: -1;
+    filter: blur(5px);
+    opacity: 0.3;
+}
+
+.overlay-main {
+        position: absolute;
+        top: 35%;
+        right: 11%;
+        background: url(/images/potion.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 650px;
+        height: 485px;
+        z-index: -1;
+        filter: blur(5px);
+        opacity: 0.5;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(185, 177, 245, 0.1)), to(rgb(238, 0, 218, 0.1)));
+}
+
+.table-hover>tbody>tr:hover {
+     background: -webkit-gradient(linear, left top, left bottom, from(rgb(238, 0, 218, 0.2)), to(rgb(185, 177, 245, 0.2)));
+}
+
+div.tab-container {
+    padding: 15px;
+    border: 2px solid rgb(185, 177, 245);
+    border-radius: 25px;
+}
+
+.btn.btn-success {
+    background: linear-gradient(to bottom right, #00a926, #8800fff5);
+}
+.btn.btn-warning {
+    background: linear-gradient(to bottom right, #ecff00, #ed77ffa6);
+}
+.btn.btn-danger {
+    background: linear-gradient(to bottom right, #fb2a2a, #7c0303);
+}
+.btn.btn-out {
+    background: linear-gradient(to bottom right, #5600ff, #ed77ffa6);
+    color: #fff;
+}
+
+.btn.btn-success:hover {
+    background: linear-gradient(to bottom right, #8800fff5, #00a926);
+}
+.btn.btn-warning:hover {
+    background: linear-gradient(to bottom right, #ed77ffa6, #ecff00);
+}
+.btn.btn-danger:hover {
+    background: linear-gradient(to bottom right, #7c0303, #fb2a2a);
+}
+.btn.btn-out:hover {
+    background: linear-gradient(to bottom right, #ed77ffa6, #5600ff);
+    color: #fff;
 }
