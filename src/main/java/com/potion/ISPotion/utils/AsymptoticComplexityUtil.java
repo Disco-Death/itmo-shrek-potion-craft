@@ -21,7 +21,7 @@ public final class AsymptoticComplexityUtil {
         }
 
         return format(
-                "Сложность: %s, Величина ошибки = %.6f",
+                "Рост: %s, мин. ошибка: %.6f",
                 asymptoticComplexityResult.asymptoticComplexity,
                 asymptoticComplexityResult.minError);
     }
@@ -68,75 +68,75 @@ public final class AsymptoticComplexityUtil {
     }
 
     private static final Iterable<AsymptoticFunction> asymptoticFunctions = Arrays.asList(
-            new AsymptoticFunction("Константная", (n) -> 1.0),
+            new AsymptoticFunction("Константный", (n) -> 1.0),
             new AsymptoticFunction(
-                    "O(log(log(log(n)))) [тройная логарифмическая]",
+                    "O(log(log(log(n)))) [тройной логарифмический]",
                     (n) -> log(log(log(n)))),
             new AsymptoticFunction(
-                    "O(log(log(n))) [двойная логарифмическая]",
+                    "O(log(log(n))) [двойной логарифмический]",
                     (n) -> log(log(n))),
             new AsymptoticFunction(
-                    "O(log(n)) [логарифмическая]",
+                    "O(log(n)) [логарифмический]",
                     Math::log),
             new AsymptoticFunction(
-                    "O(log^2(n)) [полилогарифмическая]",
+                    "O(log^2(n)) [полилогарифмический]",
                     (n) -> pow(log(n), 2)),
             new AsymptoticFunction(
-                    "O(log^3(n)) [полилогарифмическая]",
+                    "O(log^3(n)) [полилогарифмический]",
                     (n) -> pow(log(n), 3)),
             new AsymptoticFunction(
-                    "O(log^4(n)) [полилогарифмическая]",
+                    "O(log^4(n)) [полилогарифмический]",
                     (n) -> pow(log(n), 4)),
             new AsymptoticFunction(
-                    "O(n^0.5) [сублинейная]",
+                    "O(n^0.5) [сублинейный]",
                     Math::sqrt),
             new AsymptoticFunction(
-                    "O(n) [линейная]",
+                    "O(n) [линейный]",
                     (n) -> n),
             new AsymptoticFunction(
-                    "O(n*log(n)) [линейно-логарифмическая]",
+                    "O(n*log(n)) [линейно-логарифмический]",
                     (n) -> n * log(n)),
             new AsymptoticFunction(
-                    "O(n*log^2(n)) [линейно-логарифмическая]",
+                    "O(n*log^2(n)) [линейно-логарифмический]",
                     (n) -> n * pow(log(n), 2)),
             new AsymptoticFunction(
-                    "O(n*log^3(n)) [линейно-логарифмическая]",
+                    "O(n*log^3(n)) [линейно-логарифмический]",
                     (n) -> n * pow(log(n), 3)),
             new AsymptoticFunction(
-                    "O(n*log^4(n)) [линейно-логарифмическая]",
+                    "O(n*log^4(n)) [линейно-логарифмический]",
                     (n) -> n * pow(log(n), 4)),
             new AsymptoticFunction(
-                    "O(n^2) [квадратичная]",
+                    "O(n^2) [квадратичный]",
                     (n) -> pow(n, 2)),
             new AsymptoticFunction(
-                    "O(n^2*log(n)) [квадратично-логарифмическая]",
+                    "O(n^2*log(n)) [квадратично-логарифмический]",
                     (n) -> pow(n, 2) * log(n)),
             new AsymptoticFunction(
-                    "O(n^2*log^2(n)) [квадратично-логарифмическая]",
+                    "O(n^2*log^2(n)) [квадратично-логарифмический]",
                     (n) -> pow(n, 2) * pow(log(n), 2)),
             new AsymptoticFunction(
-                    "O(n^2*log^3(n)) [квадратично-логарифмическая]",
+                    "O(n^2*log^3(n)) [квадратично-логарифмический]",
                     (n) -> pow(n, 2) * pow(log(n), 3)),
             new AsymptoticFunction(
-                    "O(n^2*log^4(n)) [квадратично-логарифмическая]",
+                    "O(n^2*log^4(n)) [квадратично-логарифмический]",
                     (n) -> pow(n, 2) * pow(log(n), 4)),
             new AsymptoticFunction(
-                    "O(n^3) [кубическая]",
+                    "O(n^3) [кубический]",
                     (n) -> pow(n, 3)),
             new AsymptoticFunction(
-                    "O(n^3*log(n)) [кубически-логарифмическая]",
+                    "O(n^3*log(n)) [кубически-логарифмический]",
                     (n) -> pow(n, 3) * log(n)),
             new AsymptoticFunction(
-                    "O(n^3*log^2(n)) [кубически-логарифмическая]",
+                    "O(n^3*log^2(n)) [кубически-логарифмический]",
                     (n) -> pow(n, 3) * pow(log(n), 2)),
             new AsymptoticFunction(
-                    "O(n^3*log^3(n)) [кубически-логарифмическая]",
+                    "O(n^3*log^3(n)) [кубически-логарифмический]",
                     (n) -> pow(n, 3) * pow(log(n), 3)),
             new AsymptoticFunction(
-                    "O(n^3*log^4(n)) [кубически-логарифмическая]",
+                    "O(n^3*log^4(n)) [кубически-логарифмический]",
                     (n) -> pow(n, 3) * pow(log(n), 4)),
             new AsymptoticFunction(
-                    "O(n^4) [степенная]",
+                    "O(n^4) [степенной]",
                     (n) -> pow(n, 4))
     );
 

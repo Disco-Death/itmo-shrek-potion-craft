@@ -41,10 +41,10 @@ public class SaleController {
                            Authentication authentication,
                        Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -65,9 +65,9 @@ public class SaleController {
                               @PathVariable(value = "id") long id,
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -87,9 +87,9 @@ public class SaleController {
                                      Authentication authentication,
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         var userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -114,9 +114,9 @@ public class SaleController {
                           @RequestParam String client,
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -144,9 +144,9 @@ public class SaleController {
                                   @PathVariable(value = "id") long id,
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -176,9 +176,9 @@ public class SaleController {
                            @RequestParam String client,
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -229,9 +229,9 @@ public class SaleController {
                                  Authentication authentication,
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);

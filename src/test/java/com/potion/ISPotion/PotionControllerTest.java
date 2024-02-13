@@ -46,8 +46,15 @@ public class PotionControllerTest {
         userRoles.add(Role.POTIONS_MAKING_DEPT);
         user.setRoles(userRoles);
 
-        Potion potion1 = new Potion();
-        Potion potion2 = new Potion();
+        var ingredient = new Ingredient();
+        ingredient.setName("test ingredient name");
+
+        var potion1 = new Potion();
+        potion1.setName("test potion name 1");
+        potion1.setIngredients(Collections.singletonList(ingredient));
+        var potion2 = new Potion();
+        potion2.setName("test potion name 2");
+        potion2.setIngredients(Collections.singletonList(ingredient));
 
         when(potionRepository.findAll()).thenReturn(Arrays.asList(potion1, potion2));
 

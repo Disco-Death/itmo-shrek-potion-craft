@@ -66,7 +66,7 @@ public class TaskController {
                              @RequestParam String deadline) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.DIRECTOR,
+                Role.MERLIN,
                 Role.EMPLOYEE
         ));
 
@@ -99,7 +99,7 @@ public class TaskController {
                                  @PathVariable Long taskId) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.DIRECTOR,
+                Role.MERLIN,
                 Role.EMPLOYEE
         ));
 
@@ -121,7 +121,7 @@ public class TaskController {
         } else {
             Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                     Role.HEAD,
-                    Role.DIRECTOR,
+                    Role.MERLIN,
                     Role.EMPLOYEE
             ));
 

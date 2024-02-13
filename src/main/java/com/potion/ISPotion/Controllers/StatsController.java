@@ -34,9 +34,9 @@ public class StatsController {
                        Authentication authentication,
                        Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);

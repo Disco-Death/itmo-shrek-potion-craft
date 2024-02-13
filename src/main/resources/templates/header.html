@@ -10,6 +10,7 @@
     <a th:classappend="${requestURI.contains('/tests')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tests">Тестирование</a>
     <a th:classappend="${requestURI.contains('/users')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/users">Пользователи</a>
     <a th:classappend="${requestURI.contains('/stats')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Статистика</a>
+    <a th:classappend="${requestURI.contains('/tasks')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Задачи</a>
     <a class="flex-sm-fill text-sm-center nav-link last" href="/logout"><form th:action="@{/logout}" method="post">
       <input class="btn btn-out btn-block" type="submit" value="Выйти"/>
     </form></a>
