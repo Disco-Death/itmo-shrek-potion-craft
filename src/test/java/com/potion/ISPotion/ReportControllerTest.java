@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,7 +47,13 @@ public class ReportControllerTest {
         user.setRoles(userRoles);
 
         Report report1 = new Report();
+        report1.setUser(user);
+        report1.setDateAdd(Instant.EPOCH);
+        report1.setDateUpd(Instant.EPOCH);
         Report report2 = new Report();
+        report2.setUser(user);
+        report2.setDateAdd(Instant.EPOCH);
+        report2.setDateUpd(Instant.EPOCH);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(reportRepository.findAllByUser(any())).thenReturn(new HashSet<>(Arrays.asList(report1, report2)));
@@ -69,7 +76,7 @@ public class ReportControllerTest {
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
-        mockMvc.perform(get("/report/1")
+        mockMvc.perform(get("/report")
                         .with(user(user.getUsername()).roles(user.getRoles().toString())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/home"));
@@ -89,6 +96,7 @@ public class ReportControllerTest {
         report.setBody("test body");
         report.setTitle("test title");
         report.setSubject("test subject");
+        report.setUser(user);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
@@ -112,7 +120,7 @@ public class ReportControllerTest {
     }
 
     @Test
-    public void testReportDelete() throws Exception {
+    public void testReportEdit() throws Exception {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
@@ -124,6 +132,7 @@ public class ReportControllerTest {
         report.setTitle("Old title");
         report.setSubject("Old subject");
         report.setBody("Old body");
+        report.setUser(user);
 
         var newTitle = "New title";
         var newSubject = "New subject";
@@ -154,15 +163,19 @@ public class ReportControllerTest {
     }
 
     @Test
-    public void testStorageDelete() throws Exception {
+    public void testReportDelete() throws Exception {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
         userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
+        var report = new Report();
+        report.setUser(user);
+
         when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(reportRepository.existsById(anyLong())).thenReturn(true);
+        when(reportRepository.findById(anyLong())).thenReturn(Optional.of(report));
 
         mockMvc.perform(post("/report/delete/1")
                         .with(user(user.getUsername()).roles(user.getRoles().toString()))
