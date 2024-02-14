@@ -10,10 +10,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 import com.potion.ISPotion.repo.IngredientRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+
+import static com.potion.ISPotion.utils.AuthUtils.anyAllowedRole;
+import static com.potion.ISPotion.utils.AuthUtils.getRolesByAuthentication;
 
 @Controller
 public class IngredientController {
@@ -37,8 +46,8 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         model.addAttribute("title", "Ингредиенты");
@@ -56,12 +65,12 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
-        model.addAttribute("ingredients", ingredients );
+        model.addAttribute("ingredients", ingredients);
         model.addAttribute("title", "Ингредиенты");
         return "ingredient";
     }
@@ -76,8 +85,8 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         if (!ingredientRepository.existsById(id)) {
@@ -101,8 +110,8 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         if (!ingredientRepository.existsById(id)) {
@@ -127,8 +136,8 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         Ingredient ingredient = new Ingredient(name, property) ;
@@ -145,8 +154,8 @@ public class IngredientController {
                 Role.HEAD,
                 Role.MERLIN
         ));
-        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        if (!anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         if (!ingredientRepository.existsById(id)) {

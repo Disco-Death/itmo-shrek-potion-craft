@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:insert="~{header :: links}"></head>
+<header th:insert="~{header :: header}"></header>
+<body class="container mt-5 mb-5">
+<div class="tab-container">
+    <h3>Задачи на ревью</h3>
+    <ul class="list-group">
+        <li th:each="task : ${tasks}" class="list-group-item">
+            <span th:text="${task.description}"></span> (Ревьювер: <span th:text="${task.reviewer.username}"></span>) (Исполнитель: <span th:text="${task.executor.username}"></span>)
+            <span>Статус: <span th:text="${task.getStatusName()}"></span></span>
+            <span>Крайний срок: <span th:text="${#temporals.format(task.deadline, 'yyyy-MM-dd HH:mm')}"></span></span>
+            <form th:action="@{'/tasks/' + ${task.id} + '/changeStatus'}" method="post" style="display:inline;">
+                <select class="form-control" name="newStatus">
+                    <option value="ASSIGNED">Назначено</option>
+                    <option value="STARTED">Начато</option>
+                    <option value="SENT_FOR_REVIEW">Отправлено на рецензию</option>
+                    <option value="REVIEW_STARTED">Рецензия начата</option>
+                    <option value="SENT_FOR_REWORK">Отправлено на доработку</option>
+                    <option value="ACCEPT_COMPLETED">Завершено и принято</option>
+                </select>
+
+                <button type="submit" class="btn btn-warning btn-sm">Изменить статус</button>
+            </form>
+            <form th:action="@{'/tasks/' + ${task.id}}" method="post" style="display:inline;">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </li>
+    </ul>
+    <div class="col"><a href="/tasks/new" class="btn btn-success">Добавить задачу</a></div>
+    <div class="col"><a href="/tasks" class="btn btn-success">Задачи</a></div>
+    <div class="col"><a href="/tasks/all" class="btn btn-success">Полный список задач</a></div>
+</div>
+</body>
+</html>

@@ -6,13 +6,14 @@ import com.potion.ISPotion.repo.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.ListUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TaskService {
-
     @Autowired
     private TaskRepository taskRepository;
 
@@ -46,11 +47,21 @@ public class TaskService {
         changeTaskStatus(task, TaskStatus.ACCEPT_COMPLETED);
     }
 
-    public List<Task> getDirectorTasks() {
-        List<Task> allTasks = taskRepository.findAll();
+    public List<Task> getTaskByReviewerIdOnReview(long reviewerId) {
+        List<Task> tasks = taskRepository.findAllByReviewerId(reviewerId);
 
-        return allTasks.stream()
+        return tasks.stream()
                 .filter(task -> TaskStatus.SENT_FOR_REVIEW.equals(task.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> getAllTasksByReviewerIdAndExecutorId(long userId) {
+        var reviewerTasks = taskRepository.findAllByReviewerId(userId);
+        var executorTasks = taskRepository.findAllByExecutorId(userId);
+
+        return Stream
+                .concat(reviewerTasks.stream(), executorTasks.stream())
+                .distinct()
                 .collect(Collectors.toList());
     }
 }

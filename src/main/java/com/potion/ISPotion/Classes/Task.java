@@ -1,6 +1,15 @@
 package com.potion.ISPotion.Classes;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 
 import java.util.Date;
 
@@ -8,7 +17,6 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Task {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,8 +24,12 @@ public class Task {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "reviewer_id")
+    private User reviewer;
+
+    @ManyToOne
+    @JoinColumn(name = "executor_id")
+    private User executor;
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
@@ -52,12 +64,20 @@ public class Task {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public User getExecutor() {
+        return executor;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setExecutor(User executor) {
+        this.executor = executor;
+    }
+
+    public User getReviewer() {
+        return reviewer;
+    }
+
+    public void setReviewer(User reviewer) {
+        this.reviewer = reviewer;
     }
 
     public TaskStatus getStatus() {
@@ -94,5 +114,17 @@ public class Task {
 
     public void setDirectorTask(boolean directorTask) {
         isDirectorTask = directorTask;
+    }
+
+    public String getStatusName() {
+        switch (status) {
+            case ASSIGNED -> { return "Назначено"; }
+            case STARTED -> { return "Начато"; }
+            case SENT_FOR_REVIEW -> { return "Отправлено на рецензию"; }
+            case REVIEW_STARTED -> { return "Рецензия начата"; }
+            case SENT_FOR_REWORK -> { return "Отправлено на доработку"; }
+            case ACCEPT_COMPLETED -> { return "Завершено и принято"; }
+        }
+        return "НЕТ СТАТУСА";
     }
 }

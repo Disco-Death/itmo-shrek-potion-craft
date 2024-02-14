@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+    <head th:insert="~{header :: links}"></head>
+    <header th:insert="~{header :: header}"></header>
+    <body class="container mt-5 mb-5">
+    <div class="tab-container">
+        <h2>Создание задачи:</h2>
+        <form th:action="@{/tasks/new}" method="post">
+            <div class="form-group">
+                <label for="description">Описание задачи:</label>
+                <input type="text" class="form-control" id="description" name="description" required>
+            </div>
+            <div class="form-group">
+                <h3>Исполнитель:</h3>
+                <select name="executorId">
+                    <option th:each="executor : ${executors}"
+                            th:value="${{executor.id}}"
+                            th:text="${executor.username}">
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="deadline">Крайний срок:</label>
+                <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Создать задачу</button>
+        </form>
+    </div>
+    </body>
+</html>

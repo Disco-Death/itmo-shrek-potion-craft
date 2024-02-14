@@ -8,6 +8,8 @@ import com.potion.ISPotion.repo.TaskRepository;
 import com.potion.ISPotion.repo.UserRepository;
 import com.potion.ISPotion.utils.AuthUtils;
 import com.potion.ISPotion.utils.TaskService;
+import com.potion.ISPotion.utils.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -17,15 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
-
     @Autowired
     private TaskRepository taskRepository;
 
@@ -35,39 +33,132 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private UserService userService;
+
+    @ModelAttribute("requestURI")
+    public String requestURI(final HttpServletRequest request) {
+        return request.getRequestURI();
+    }
+
     @GetMapping
-    public String getAllTasks(Model model) {
-        List<Task> tasks = taskRepository.findAll();
+    public String tasks(@CurrentSecurityContext(expression = "authentication")
+                            Authentication authentication,
+                        Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.HEAD,
+                Role.MERLIN,
+                Role.EMPLOYEE
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        var user = AuthUtils.getUserByAuthentication(userRepository, authentication);
+
+        var tasks = taskService.getAllTasksByReviewerIdAndExecutorId(user.getId());
         model.addAttribute("tasks", tasks);
 
-        List<Task> directorTasks = taskService.getDirectorTasks();
-        model.addAttribute("directorTasks", directorTasks);
+        return "task";
+    }
+
+    @GetMapping("/all")
+    public String getAllTasks(@CurrentSecurityContext(expression = "authentication")
+                                  Authentication authentication,
+                              Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.MERLIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        var tasks = taskRepository.findAll();
+        model.addAttribute("tasks", tasks);
 
         return "task";
     }
 
     @GetMapping("/{userId}")
-    public String getTasksByUserId(@PathVariable Long userId, Model model) {
-        List<Task> tasks = taskRepository.findByUserId(userId);
+    public String getTasksByUserId(@CurrentSecurityContext(expression = "authentication")
+                                       Authentication authentication,
+                                   @PathVariable Long userId,
+                                   Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.HEAD,
+                Role.MERLIN,
+                Role.EMPLOYEE
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        List<Task> tasks = taskRepository.findAllByExecutorId(userId);
         model.addAttribute("tasks", tasks);
         return "task";
     }
 
-    @GetMapping("/director/tasks")
-    public String getDirectorTasks(Model model) {
-        List<Task> directorTasks = taskService.getDirectorTasks();
-        model.addAttribute("directorTasks", directorTasks);
-        return "director-tasks";
+    @GetMapping("/review")
+    public String getTaskInReview(@CurrentSecurityContext(expression = "authentication")
+                                      Authentication authentication,
+                                  Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.HEAD,
+                Role.MERLIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        var user = AuthUtils.getUserByAuthentication(userRepository, authentication);
+
+        var tasks = taskService.getTaskByReviewerIdOnReview(user.getId());
+        model.addAttribute("tasks", tasks);
+
+        return "task-review";
+    }
+
+    @GetMapping("/new")
+    public String createTaskDisplay(@CurrentSecurityContext(expression = "authentication")
+                                        Authentication authentication,
+                                    Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.HEAD,
+                Role.MERLIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        var executors = userService.findAllExecutors();
+
+        model.addAttribute("title", "Добавить задачу");
+        model.addAttribute("executors", executors);
+
+        return "task-add";
     }
 
     @PostMapping("/new")
-    public String createTask(@CurrentSecurityContext(expression = "authentication") Authentication authentication,
-                             @RequestParam String description, @RequestParam String username,
-                             @RequestParam String deadline) {
+    public String createTask(@CurrentSecurityContext(expression = "authentication")
+                                 Authentication authentication,
+                             @RequestParam Long executorId,
+                             @RequestParam String description,
+                             @RequestParam String deadline,
+                             Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -81,12 +172,15 @@ public class TaskController {
         LocalDateTime deadlineDateTime = LocalDateTime.parse(deadline, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
         task.setDeadline(deadlineDateTime);
 
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("Пользователь с именем " + username + " не найден");
-        }
+        if (!userRepository.existsById(executorId))
+            return "redirect:/sale";
 
-        task.setUser(user);
+        User executor = userRepository.findById(executorId).orElseThrow();
+
+        var user = AuthUtils.getUserByAuthentication(userRepository, authentication);
+
+        task.setExecutor(executor);
+        task.setReviewer(user);
         task.setStatus(TaskStatus.ASSIGNED);
         task.setCreatedAt(LocalDateTime.now()); // Установка времени создания задания
         taskRepository.save(task);
@@ -96,11 +190,12 @@ public class TaskController {
     @PostMapping("/{taskId}")
     public String deleteTaskPost(@CurrentSecurityContext(expression = "authentication")
                                  Authentication authentication,
-                                 @PathVariable Long taskId) {
+                                 @PathVariable Long taskId,
+                                 Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
-                Role.MERLIN,
-                Role.EMPLOYEE
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -112,45 +207,46 @@ public class TaskController {
     }
 
     @PostMapping("/{taskId}/changeStatus")
-    public String changeStatus(@PathVariable Long taskId, @RequestParam String newStatus,
-                               @CurrentSecurityContext(expression = "authentication") Authentication authentication) {
+    public String changeStatus(@CurrentSecurityContext(expression = "authentication")
+                                   Authentication authentication,
+                               @PathVariable Long taskId,
+                               @RequestParam String newStatus,
+                               Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
+                Role.HEAD,
+                Role.MERLIN,
+                Role.EMPLOYEE
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Задание не найдено"));
 
         if ("STARTED".equals(newStatus) || "SENT_FOR_REVIEW".equals(newStatus)) {
             task.setStatus(TaskStatus.valueOf(newStatus));
         } else {
-            Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                    Role.HEAD,
-                    Role.MERLIN,
-                    Role.EMPLOYEE
-            ));
-
-            Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-
-            if (AuthUtils.anyAllowedRole(userRoles, allowedRoles)) {
-                switch (newStatus) {
-                    case "ASSIGNED":
-                        task.setStatus(TaskStatus.ASSIGNED);
-                        break;
-                    case "REVIEW_STARTED":
-                        task.setStatus(TaskStatus.REVIEW_STARTED);
-                        break;
-                    case "SENT_FOR_REWORK":
-                        task.setStatus(TaskStatus.SENT_FOR_REWORK);
-                        break;
-                    case "ACCEPT_COMPLETED":
-                        task.setStatus(TaskStatus.ACCEPT_COMPLETED);
-                        break;
-                    default:
-                        return "redirect:/tasks";
-                }
-            } else {
-                return "redirect:/tasks";
+            switch (newStatus) {
+                case "ASSIGNED":
+                    task.setStatus(TaskStatus.ASSIGNED);
+                    break;
+                case "REVIEW_STARTED":
+                    task.setStatus(TaskStatus.REVIEW_STARTED);
+                    break;
+                case "SENT_FOR_REWORK":
+                    task.setStatus(TaskStatus.SENT_FOR_REWORK);
+                    break;
+                case "ACCEPT_COMPLETED":
+                    task.setStatus(TaskStatus.ACCEPT_COMPLETED);
+                    break;
+                default:
+                    return "redirect:/tasks";
             }
         }
 
         taskRepository.save(task);
         return "redirect:/tasks";
     }
-
 }
