@@ -32,6 +32,12 @@ public final class AuthUtils {
     }
 
     public static Set<String> getHeaderPermissions(UserRepository userRepository, Authentication authentication) {
+        if (authentication.getPrincipal() == "anonymousUser") {
+            ArrayList<String> permissionsArray = new ArrayList<>();
+            permissionsArray.add("Anonymously");
+            return new HashSet<>(permissionsArray);
+        }
+
         Set<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
         ArrayList<String> permissionsArray = new ArrayList<>();
 
