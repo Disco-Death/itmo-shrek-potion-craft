@@ -60,6 +60,7 @@ public class TaskController {
 
         var tasks = taskService.getAllTasksByReviewerIdAndExecutorId(user.getId());
         model.addAttribute("tasks", tasks);
+        model.addAttribute("title", "Задачи");
 
         return "task";
     }
@@ -173,7 +174,7 @@ public class TaskController {
         task.setDeadline(deadlineDateTime);
 
         if (!userRepository.existsById(executorId))
-            return "redirect:/sale";
+            return "redirect:/tasks";
 
         User executor = userRepository.findById(executorId).orElseThrow();
 
