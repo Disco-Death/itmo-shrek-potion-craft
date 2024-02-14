@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 
 @Controller
@@ -40,16 +37,22 @@ public class StorageController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/storage")
     public String storage(@CurrentSecurityContext(expression="authentication")
-                              Authentication authentication,
-                          Model model) {
+                              Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -66,14 +69,14 @@ public class StorageController {
 
     @GetMapping("/storage/add")
     public String storageDisplayAdd(@CurrentSecurityContext(expression="authentication")
-                                        Authentication authentication,
-                                    Model model) {
+                                        Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -90,18 +93,14 @@ public class StorageController {
 
     @PostMapping("/storage/add")
     public String storageCellPostAdd(@CurrentSecurityContext(expression="authentication")
-                                         Authentication authentication,
-                                     @RequestParam String entity,
-                                     @RequestParam String ingredientId,
-                                     @RequestParam String potionId,
-                                     @RequestParam String quantity,
-                                     Model model) {
+                                         Authentication authentication,@RequestParam String entity, @RequestParam String ingredientId, @RequestParam String potionId, @RequestParam String quantity, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -127,18 +126,16 @@ public class StorageController {
         }
         return "redirect:/storage";
     }
-
     @GetMapping("/storage/edit/{id}")
     public String storageCellEditDisplay(@CurrentSecurityContext(expression="authentication")
-                                             Authentication authentication,
-                                         @PathVariable(value = "id") long id,
-                                         Model model) {
+                                             Authentication authentication,@PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -157,19 +154,16 @@ public class StorageController {
         model.addAttribute("title", "Склад");
         return "storage-cell-edit";
     }
-
     @PostMapping("/storage/edit/{id}")
     public String storageCellEdit(@CurrentSecurityContext(expression="authentication")
-                                      Authentication authentication,
-                                  @PathVariable(value = "id") long id,
-                                  @RequestParam String quantity,
-                                  Model model) {
+                                      Authentication authentication,@PathVariable(value = "id") long id, @RequestParam String quantity, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -185,14 +179,14 @@ public class StorageController {
 
     @PostMapping("/storage/delete/{id}")
     public String storageCellDelete(@CurrentSecurityContext(expression="authentication")
-                                        Authentication authentication,
-                                    @PathVariable(value = "id") long id) {
+                                        Authentication authentication,@PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -207,14 +201,13 @@ public class StorageController {
 
     @PostMapping("/storage/record/restore/{id}")
     public String recordDelete(@CurrentSecurityContext(expression="authentication")
-                                   Authentication authentication,
-                               @PathVariable(value = "id") long id) {
+                                   Authentication authentication,@PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.EMPLOYEE,
                 Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -226,4 +219,5 @@ public class StorageController {
         storageService.storageRecordRestoreOperation(record);
         return "redirect:/storage";
     }
+
 }

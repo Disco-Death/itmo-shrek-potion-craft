@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class TestsController {
@@ -39,16 +40,22 @@ public class TestsController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
     @GetMapping("/tests")
     public String testsDisplay(@CurrentSecurityContext(expression="authentication")
-                                   Authentication authentication,
-                               Model model) {
+                                   Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
-                Role.TEST_DEPT,
                 Role.HEAD,
+                Role.TEST_DEPT,
                 Role.MERLIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
@@ -65,17 +72,18 @@ public class TestsController {
 
     @PostMapping("/tests/edit/{id}")
     public String testEditStatus(@CurrentSecurityContext(expression="authentication")
-                                     Authentication authentication,
-                                 @PathVariable(value = "id") long id,
-                                 Model model) {
+                                     Authentication authentication,@PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.TEST_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.TEST_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         if (!storageCellRepository.existsById(id)) {

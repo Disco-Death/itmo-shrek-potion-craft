@@ -41,11 +41,18 @@ public class TaskController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping
     public String tasks(@CurrentSecurityContext(expression = "authentication")
                             Authentication authentication,
                         Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN,
@@ -70,6 +77,7 @@ public class TaskController {
                                   Authentication authentication,
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.MERLIN
         ));
@@ -90,6 +98,7 @@ public class TaskController {
                                    @PathVariable Long userId,
                                    Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN,
@@ -110,6 +119,7 @@ public class TaskController {
                                       Authentication authentication,
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -132,6 +142,7 @@ public class TaskController {
                                         Authentication authentication,
                                     Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -157,6 +168,7 @@ public class TaskController {
                              @RequestParam String deadline,
                              Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -194,6 +206,7 @@ public class TaskController {
                                  @PathVariable Long taskId,
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -214,6 +227,7 @@ public class TaskController {
                                @RequestParam String newStatus,
                                Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN,

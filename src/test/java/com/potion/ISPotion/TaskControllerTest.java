@@ -82,7 +82,7 @@ public class TaskControllerTest {
         user.setId(1L);
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var task = new Task();
@@ -122,7 +122,7 @@ public class TaskControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var task = new Task();
@@ -157,7 +157,7 @@ public class TaskControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var task = new Task();

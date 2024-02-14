@@ -6,8 +6,7 @@ import com.potion.ISPotion.repo.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public final class AuthUtils {
     private AuthUtils(){}
@@ -24,5 +23,42 @@ public final class AuthUtils {
     public static Set<Role> getRolesByAuthentication(UserRepository userRepository, Authentication authentication) {
         User user = getUserByAuthentication(userRepository, authentication);
         return user.getRoles();
+    }
+
+    public static boolean allAllowedRole(Collection<Role> userRoles, Collection<Role> validRoles) {
+        Set<Role> uR = new HashSet<Role>(userRoles);
+        Set<Role> vR = new HashSet<Role>(validRoles);
+        return vR.containsAll(uR);
+    }
+
+    public static Set<String> getHeaderPermissions(UserRepository userRepository, Authentication authentication) {
+        Set<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
+        ArrayList<String> permissionsArray = new ArrayList<>();
+
+        if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) ) {
+            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats"));
+        }
+        if (userRoles.contains(Role.TEST_DEPT)) {
+            permissionsArray.addAll(Arrays.asList("storage","tests"));
+        }
+        if (userRoles.contains(Role.HEAD)) {
+            permissionsArray.addAll(Arrays.asList("report"));
+        }
+        if (userRoles.contains(Role.PICKING_DEPT)) {
+            permissionsArray.addAll(Arrays.asList("ingredient"));
+        }
+        if (userRoles.contains(Role.POTIONS_MAKING_DEPT)) {
+            permissionsArray.addAll(Arrays.asList("potion", "ingredient"));
+        }
+        if (userRoles.contains(Role.SALES_DEPT)) {
+            permissionsArray.addAll(Arrays.asList("sale"));
+        }
+        if (anyAllowedRole(userRoles, new HashSet<>(Arrays.asList(Role.EMPLOYEE, Role.HEAD)))) {
+            permissionsArray.addAll(Arrays.asList("storage"));
+        }
+
+        HashSet<String> permissions = new HashSet<>(permissionsArray);
+
+        return permissions;
     }
 }

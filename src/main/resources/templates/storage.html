@@ -67,8 +67,8 @@
                         <span th:case="'REMOVE'">Удален</span>
                     </td>
                     <td th:text="${rec.operation_value}" th:value="${rec.operation_value}" ></td>
-                    <td th:text="${rec.date_add}" th:value="${rec.date_add}" ></td>
-                    <td th:text="${rec.date_upd}" th:value="${rec.date_upd}" ></td>
+                    <td th:text="${rec.dateAdd}" th:value="${rec.dateAdd}" ></td>
+                    <td th:text="${rec.dateUpd}" th:value="${rec.dateUpd}" ></td>
                     <td>
                         <span th:switch="${rec.operation.name()}" th:remove="tag">
                             <div th:case="'ADD'" th:remove="tag">

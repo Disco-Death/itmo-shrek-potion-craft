@@ -67,12 +67,12 @@ public class StorageControllerTest {
 
         StorageRecord record1 = new StorageRecord();
         record1.setOperation(StorageRecordOperation.ADD);
-        record1.setDate_add(Instant.EPOCH);
-        record1.setDate_upd(Instant.EPOCH);
+        record1.setDateAdd(Instant.EPOCH);
+        record1.setDateUpd(Instant.EPOCH);
         StorageRecord record2 = new StorageRecord();
         record2.setOperation(StorageRecordOperation.SUBTRACTION);
-        record2.setDate_add(Instant.EPOCH);
-        record2.setDate_upd(Instant.EPOCH);
+        record2.setDateAdd(Instant.EPOCH);
+        record2.setDateUpd(Instant.EPOCH);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(storageCellRepository.findAll()).thenReturn(Arrays.asList(cell1, cell2));
@@ -92,7 +92,7 @@ public class StorageControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var storageCell = new StorageCell();
@@ -128,7 +128,7 @@ public class StorageControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var storageCell = new StorageCell();
@@ -164,7 +164,7 @@ public class StorageControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var storageCell = new StorageCell();
@@ -198,7 +198,7 @@ public class StorageControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var storageCell = new StorageCell();

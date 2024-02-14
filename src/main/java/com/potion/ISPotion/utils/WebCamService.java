@@ -1,58 +1,82 @@
 package com.potion.ISPotion.utils;
 
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamException;
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.repo.UserRepository;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.stereotype.Component;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Blob;
 
-import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 @Controller
 public class WebCamService {
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+
+        factory.setMaxFileSize(DataSize.parse("10MB"));
+        factory.setMaxRequestSize(DataSize.parse("10MB"));
+
+        return factory.createMultipartConfig();
+    }
     @Autowired
     UserRepository userRepository;
-    public void snapshot(String filename) throws IOException {
-        try{
-            Webcam webcam = Webcam.getDefault();
-            webcam.open(true);
-            File folder = new File("screenshots");
+    @PostMapping(value = "/record")
+    public String getSnapshot(@CurrentSecurityContext(expression="authentication")
+                                Authentication authentication, HttpServletRequest  request) throws Exception {
+        try {
+            User user = AuthUtils.getUserByAuthentication(userRepository, authentication);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-hh-mm");
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            Set set = multipartRequest.getFileMap().entrySet();
+            Iterator i = set.iterator();
+            while(i.hasNext()) {
+                Map.Entry me = (Map.Entry)i.next();
+                String fileName = user.getUsername() + "-" + java.time.LocalDateTime.now().format(formatter) + ".webm";
+                MultipartFile multipartFile = (MultipartFile)me.getValue();
+                writeToDisk(fileName, multipartFile);
+            }
+        }
+        catch (Exception ignored) {
+
+        }
+        return "home";
+    }
+    public void writeToDisk(String filename, MultipartFile multipartFile)
+    {
+        try
+        {
+            File folder = new File("video");
             if (!folder.exists()) {
                 folder.mkdir();
             }
-            ImageIO.write(webcam.getImage(), "PNG", new File("screenshots"+File.separator+filename+".png"));
-        } catch (WebcamException ignored) {;}
-    }
 
-    @PostMapping("/snapshot")
-    public void getSnapshot(@CurrentSecurityContext(expression="authentication")
-                                Authentication authentication, @RequestBody byte[] bytes) throws Exception {
-        // Сохранить изображение в файл
-        User user = AuthUtils.getUserByAuthentication(userRepository, authentication);
-        Path path = Paths.get("snapshot"+user.getUsername()+".jpg");
-        Files.write(path, bytes);
+            String fullFileName = "video"+File.separator+ filename;
+            FileOutputStream fos = new FileOutputStream(fullFileName);
+            fos.write(multipartFile.getBytes());
+            fos.close();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
-
-    @PostMapping("/record")
-    public void record(@RequestBody Blob bytes) throws Exception {
-        // Сохранить запись в файл
-        Path path = Paths.get("recording.wav");
-        Files.write(path, bytes.getBytes(0, Long.valueOf(bytes.length()).intValue()));
-    }
-
 }

@@ -16,10 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 @Controller
 public class PotionController {
@@ -35,18 +32,26 @@ public class PotionController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/potion/add")
     public String potionDisplayAdd(@CurrentSecurityContext(expression="authentication")
-                                       Authentication authentication,
-                                   Model model) {
+                                       Authentication authentication, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.POTIONS_MAKING_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
@@ -55,38 +60,39 @@ public class PotionController {
         return "potion-add";
     }
 
+
     @GetMapping("/potion")
     public String potion(@CurrentSecurityContext(expression="authentication")
-                             Authentication authentication,
-                         Model model) {
+                             Authentication authentication, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.POTIONS_MAKING_DEPT,
                 Role.HEAD,
-                Role.MERLIN
+                Role.POTIONS_MAKING_DEPT,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
-
         Iterable<Potion> potions = potionRepository.findAll();
         model.addAttribute("potions", potions );
         model.addAttribute("title", "Зелья");
         return "potion";
     }
-
     @GetMapping("/potion/edit/{id}")
     public String potionEditDisplay(@CurrentSecurityContext(expression="authentication")
-                                        Authentication authentication,
-                                    @PathVariable(value = "id") long id,
-                                    Model model) {
+                                        Authentication authentication, @PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         if (!potionRepository.existsById(id)) {
@@ -100,20 +106,20 @@ public class PotionController {
         model.addAttribute("title", "Зелья");
         return "potion-edit";
     }
-
     @PostMapping("/potion/edit/{id}")
     public String potionEdit(@CurrentSecurityContext(expression="authentication")
-                                 Authentication authentication,
-                             @PathVariable(value = "id") long id,
-                             HttpServletRequest request,
-                             Model model) {
+                                 Authentication authentication, @PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         if (!potionRepository.existsById(id)) {
@@ -139,17 +145,18 @@ public class PotionController {
 
     @PostMapping("/potion/add")
     public String potionAdd(@CurrentSecurityContext(expression="authentication")
-                                Authentication authentication,
-                            HttpServletRequest request,
-                            Model model) {
+                                Authentication authentication, HttpServletRequest request, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.POTIONS_MAKING_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         String[] ingredientsIds = request.getParameterValues("ingredientsIds");
@@ -165,19 +172,20 @@ public class PotionController {
         potionRepository.save(potion);
         return "redirect:/potion";
     }
-
     @PostMapping("/potion/delete/{id}")
     public String potionDelete(@CurrentSecurityContext(expression="authentication")
-                                   Authentication authentication,
-                               @PathVariable(value = "id") long id) {
+                                   Authentication authentication, @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.POTIONS_MAKING_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         if (!potionRepository.existsById(id)) {

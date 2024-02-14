@@ -2,15 +2,15 @@
   <div class="overlay-main"></div>
   <div class="overlay-menu"></div>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a th:classappend="${requestURI.contains('/ingredient')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/ingredient">Ингредиенты</a>
-    <a th:classappend="${requestURI.contains('/potion')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/potion">Зелья</a>
-    <a th:classappend="${requestURI.contains('/report')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/report">Отчеты</a>
-    <a th:classappend="${requestURI.contains('/sale')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/sale">Продажи</a>
-    <a th:classappend="${requestURI.contains('/storage')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/storage">Склад</a>
-    <a th:classappend="${requestURI.contains('/tests')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tests">Тестирование</a>
-    <a th:classappend="${requestURI.contains('/users')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/users">Пользователи</a>
-    <a th:classappend="${requestURI.contains('/stats')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Статистика</a>
-    <a th:classappend="${requestURI.contains('/tasks')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tasks">Задачи</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('ingredient')}" th:classappend="${requestURI.contains('/ingredient')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/ingredient">Ингредиенты</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('potion')}" th:classappend="${requestURI.contains('/potion')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link " href="/potion">Зелья</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('report')}" th:classappend="${requestURI.contains('/report')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/report">Отчеты</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('sale')}" th:classappend="${requestURI.contains('/sale')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/sale">Продажи</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('storage')}" th:classappend="${requestURI.contains('/storage')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/storage">Склад</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('tests')}" th:classappend="${requestURI.contains('/tests')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tests">Тестирование</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('users')}" th:classappend="${requestURI.contains('/users')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/users">Пользователи</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('stats')}" th:classappend="${requestURI.contains('/stats')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Статистика</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('tasks')}" th:classappend="${requestURI.contains('/tasks')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tasks">Задачи</a>
     <a class="flex-sm-fill text-sm-center nav-link last" href="/logout"><form th:action="@{/logout}" method="post">
       <input class="btn btn-out btn-block" type="submit" value="Выйти"/>
     </form></a>

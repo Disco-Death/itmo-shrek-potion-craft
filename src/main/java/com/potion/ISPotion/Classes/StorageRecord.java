@@ -31,10 +31,10 @@ public class StorageRecord {
     private int was_restored;
 
     @CreationTimestamp
-    private Instant date_add;
+    private Instant dateAdd;
 
     @CreationTimestamp
-    private Instant date_upd;
+    private Instant dateUpd;
 
     public Long getId() {
         return id;
@@ -68,20 +68,20 @@ public class StorageRecord {
         this.operation_value = operation_value;
     }
 
-    public String getDate_add() {
-        return date_add.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
+    public String getDateAdd() {
+        return dateAdd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
     }
 
-    public void setDate_add(Instant date_add) {
-        this.date_add = date_add;
+    public void setDateAdd(Instant dateAdd) {
+        this.dateAdd = dateAdd;
     }
 
-    public String getDate_upd() {
-        return date_upd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
+    public String getDateUpd() {
+        return dateUpd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
     }
 
-    public void setDate_upd(Instant date_upd) {
-        this.date_upd = date_upd;
+    public void setDateUpd(Instant dateUpd) {
+        this.dateUpd = dateUpd;
     }
 
     public  StorageRecord() {

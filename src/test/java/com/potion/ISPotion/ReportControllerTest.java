@@ -18,8 +18,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -50,7 +49,7 @@ public class ReportControllerTest {
         Report report2 = new Report();
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
-        when(reportRepository.findAll()).thenReturn(Arrays.asList(report1, report2));
+        when(reportRepository.findAllByUser(any())).thenReturn(new HashSet<>(Arrays.asList(report1, report2)));
 
         mockMvc.perform(get("/report")
                         .with(user(user.getUsername()).roles(user.getRoles().toString())))
@@ -81,7 +80,7 @@ public class ReportControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var report = new Report();
@@ -117,7 +116,7 @@ public class ReportControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         var report = new Report();
@@ -159,7 +158,7 @@ public class ReportControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.HEAD);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);

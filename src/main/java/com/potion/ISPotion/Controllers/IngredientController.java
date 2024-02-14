@@ -10,46 +10,44 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import com.potion.ISPotion.repo.IngredientRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-
-import static com.potion.ISPotion.utils.AuthUtils.anyAllowedRole;
-import static com.potion.ISPotion.utils.AuthUtils.getRolesByAuthentication;
+import java.util.*;
 
 @Controller
 public class IngredientController {
     @Autowired
     public IngredientRepository ingredientRepository;
+
     @Autowired
     private UserRepository userRepository;
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                   Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @ModelAttribute("requestURI")
-    public String requestURI(final HttpServletRequest request) {
-        return request.getRequestURI();
+    public String requestURI(final HttpServletRequest request) {return request.getRequestURI();
     }
 
     @GetMapping("/ingredient/add")
     public String ingredientDisplayAdd(@CurrentSecurityContext(expression="authentication")
-                                           Authentication authentication,
-                                       Model model) {
+                                           Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.PICKING_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
-            return "redirect:/home";
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.PICKING_DEPT
+        ));
 
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
         model.addAttribute("title", "Ингредиенты");
         return "ingredient-add";
     }
@@ -60,33 +58,36 @@ public class IngredientController {
                                  Authentication authentication,
                              Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.PICKING_DEPT,
                 Role.HEAD,
-                Role.MERLIN
+                Role.PICKING_DEPT,
+                Role.POTIONS_MAKING_DEPT,
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
-        model.addAttribute("ingredients", ingredients);
+        model.addAttribute("ingredients", ingredients );
         model.addAttribute("title", "Ингредиенты");
         return "ingredient";
     }
-
     @GetMapping("/ingredient/edit/{id}")
     public String ingredientEditDisplay(@CurrentSecurityContext(expression="authentication")
-                                            Authentication authentication,
-                                        @PathVariable(value = "id") long id,
-                                        Model model) {
+                                            Authentication authentication, @PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.PICKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         if (!ingredientRepository.existsById(id)) {
@@ -97,23 +98,21 @@ public class IngredientController {
         model.addAttribute("title", "Ингредиенты");
         return "ingredient-edit";
     }
-
     @PostMapping("/ingredient/edit/{id}")
     public String ingredientEdit(@CurrentSecurityContext(expression="authentication")
-                                     Authentication authentication,
-                                 @PathVariable(value = "id") long id,
-                                 @RequestParam String name,
-                                 @RequestParam String property,
-                                 Model model) {
+                                     Authentication authentication, @PathVariable(value = "id") long id, @RequestParam String name, @RequestParam String property, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
-            return "redirect:/home";
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.PICKING_DEPT
+        ));
 
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
         if (!ingredientRepository.existsById(id)) {
             return "redirect:/ingredient";
         }
@@ -126,38 +125,38 @@ public class IngredientController {
 
     @PostMapping("/ingredient/add")
     public String ingredientAdd(@CurrentSecurityContext(expression="authentication")
-                                    Authentication authentication,
-                                @RequestParam String name,
-                                @RequestParam String property,
-                                Model model) {
+                                    Authentication authentication, @RequestParam String name, @RequestParam String property, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.PICKING_DEPT,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
-            return "redirect:/home";
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.PICKING_DEPT
+        ));
 
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
         Ingredient ingredient = new Ingredient(name, property) ;
         ingredientRepository.save(ingredient);
         return "redirect:/ingredient";
     }
-
     @PostMapping("/ingredient/delete/{id}")
     public String ingredientDelete(@CurrentSecurityContext(expression="authentication")
-                                       Authentication authentication,
-                                   @PathVariable(value = "id") long id) {
+                                       Authentication authentication, @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
-                Role.ADMIN,
-                Role.HEAD,
-                Role.MERLIN
+                Role.DIRECTOR,
+                Role.ADMIN
         ));
-        Collection<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
-        if (!anyAllowedRole(userRoles, allowedRoles))
-            return "redirect:/home";
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.PICKING_DEPT
+        ));
 
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
         if (!ingredientRepository.existsById(id)) {
             return "redirect:/ingredient";
         }

@@ -9,8 +9,12 @@
     <thead>
     <tr>
       <th scope="row">#</th>
+      <th>Пользователь</th>
+      <th>Роль пользователя</th>
       <th>Заголовок</th>
       <th>Тема</th>
+      <th>Дата добавления</th>
+      <th>Дата изменения</th>
       <th></th>
       <th></th>
       <th></th>
@@ -19,8 +23,12 @@
     <tbody>
     <tr th:each="el : ${reports}">
       <th scope="row" th:text="${el.id}" th:value="${el.id}"></th>
+      <td th:text="${el.user.username}"   th:value="${el.title}" ></td>
+      <td th:text="${el.user.roles.toString()}"   th:value="${el.user.roles.toString()}" ></td>
       <td th:text="${el.title}"   th:value="${el.title}" ></td>
       <td th:text="${el.subject}"   th:value="${el.subject}" ></td>
+      <td th:text="${el.dateAdd}" th:value="${el.dateAdd}" ></td>
+      <td th:text="${el.dateUpd}" th:value="${el.dateUpd}" ></td>
       <td>
         <a th:if="${el.isSended == true}" th:href="'/report/' + ${el.id}"  class="btn btn-success">Смотреть отчет</a>
         <form th:if="${el.isSended == false}" th:action="'/report/send/' + ${el.id}" method="post" class="col">

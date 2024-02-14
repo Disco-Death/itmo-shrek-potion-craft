@@ -1,7 +1,7 @@
 package com.potion.ISPotion.Controllers;
 
-import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.Role;
+import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.Sale;
 import com.potion.ISPotion.repo.PotionRepository;
 import com.potion.ISPotion.repo.SaleRepository;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 @Controller
 public class SaleController {
@@ -36,11 +34,18 @@ public class SaleController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/sale")
     public String sale(@CurrentSecurityContext(expression="authentication")
                            Authentication authentication,
                        Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -64,6 +69,7 @@ public class SaleController {
                               @PathVariable(value = "id") long id,
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -87,6 +93,7 @@ public class SaleController {
                                      Authentication authentication,
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -115,6 +122,7 @@ public class SaleController {
                           @RequestParam String client,
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -146,6 +154,7 @@ public class SaleController {
                                   @PathVariable(value = "id") long id,
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -178,6 +187,7 @@ public class SaleController {
                            @RequestParam String client,
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -231,6 +241,7 @@ public class SaleController {
                                  Authentication authentication,
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
