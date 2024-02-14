@@ -25,10 +25,17 @@ public class RegistrationController {
     public String requestURI(final HttpServletRequest request) {
         return request.getRequestURI();
     }
+
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
     @GetMapping("/home")
     public  String home(@CurrentSecurityContext(expression="authentication")
                             Authentication authentication,  Model model) throws IOException {
         model.addAttribute("title", "Зельевар");
+        model.addAttribute("authentication", authentication);
         return "home";
     }
     @GetMapping("/registration")
@@ -44,12 +51,22 @@ public class RegistrationController {
             return "registration";
         }
         user.setActive(true);
-        user.setRoles(Collections.singleton(Role.EMPLOYEE));
+        user.setRoles(Collections.singleton(Role.ADMIN));
         userRepository.save(user);
         return "redirect:/login";
     }
     @GetMapping("/users")
-    public  String usersDisplay(Model model) {
+    public  String usersDisplay(@CurrentSecurityContext(expression="authentication")
+                                    Authentication authentication, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         Iterable<User> users = userRepository.findAll();
 
         model.addAttribute("users", users );
@@ -58,7 +75,17 @@ public class RegistrationController {
     }
 
     @GetMapping("/users/edit/{id}")
-    public String userEditDisplay(@PathVariable(value = "id") long id, Model model) {
+    public String userEditDisplay(@CurrentSecurityContext(expression="authentication")
+                                      Authentication authentication, @PathVariable(value = "id") long id, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!userRepository.existsById(id)) {
             return "redirect:/users";
         }
@@ -72,7 +99,17 @@ public class RegistrationController {
     }
 
     @PostMapping("/users/edit/{id}")
-    public String userEdit(@PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
+    public String userEdit(@CurrentSecurityContext(expression="authentication")
+                               Authentication authentication, @PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!userRepository.existsById(id)) {
             return "redirect:/users";
         }
@@ -90,7 +127,7 @@ public class RegistrationController {
         if (!newPassword.isEmpty() && !user.getPassword().contentEquals(newPassword)) {
             user.setPassword(newPassword);
         }
-        if (!newRoles.isEmpty() && !user.getRoles().containsAll(newRoles)) {
+        if (!newRoles.isEmpty()) {
             user.setRoles(newRoles);
         }
         if (user.isActive() != newIsActive) {
@@ -103,14 +140,34 @@ public class RegistrationController {
     }
 
     @GetMapping("/users/add")
-    public String userDisplayAdd(Model model) {
+    public String userDisplayAdd(@CurrentSecurityContext(expression="authentication")
+                                     Authentication authentication, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         model.addAttribute("roles", Role.values() );
         model.addAttribute("title", "Добавление нового пользователя");
         return "user-add";
     }
 
     @PostMapping("/users/add")
-    public String userAdd(HttpServletRequest request, Model model) {
+    public String userAdd(@CurrentSecurityContext(expression="authentication")
+                              Authentication authentication, HttpServletRequest request, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         ArrayList<Role> newUserRoles = new ArrayList<Role>();
         String[] roles = request.getParameterValues("roles");
         String newUserName = Arrays.toString(request.getParameterValues("user-name")).replace("[", "").replace("]", "");
@@ -136,7 +193,17 @@ public class RegistrationController {
         return "redirect:/users";
     }
     @PostMapping("/users/delete/{id}")
-    public String userDelete(@PathVariable(value = "id") long id) {
+    public String userDelete(@CurrentSecurityContext(expression="authentication")
+                                 Authentication authentication, @PathVariable(value = "id") long id) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!userRepository.existsById(id)) {
             return "redirect:/users";
         }

@@ -57,12 +57,12 @@ public class StorageControllerTest {
 
         StorageRecord record1 = new StorageRecord();
         record1.setOperation(StorageRecordOperation.ADD);
-        record1.setDate_add(Instant.MIN);
-        record1.setDate_upd(Instant.MIN);
+        record1.setDateAdd(Instant.MIN);
+        record1.setDateUpd(Instant.MIN);
         StorageRecord record2 = new StorageRecord();
         record2.setOperation(StorageRecordOperation.ADD);
-        record2.setDate_add(Instant.MIN);
-        record2.setDate_upd(Instant.MIN);
+        record2.setDateAdd(Instant.MIN);
+        record2.setDateUpd(Instant.MIN);
 
         when(storageCellRepository.findAll()).thenReturn(Arrays.asList(cell1, cell2));
         when(storageRecordRepository.findAll()).thenReturn(Arrays.asList(record1, record2));

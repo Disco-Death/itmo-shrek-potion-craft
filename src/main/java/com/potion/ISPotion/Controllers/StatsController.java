@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class StatsController {
@@ -29,6 +30,12 @@ public class StatsController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/stats")
     public String stats(@CurrentSecurityContext(expression="authentication")
                        Authentication authentication,
@@ -37,7 +44,8 @@ public class StatsController {
                 Role.SALES_DEPT,
                 Role.HEAD,
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);

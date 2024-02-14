@@ -2,17 +2,21 @@ package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.Ingredient;
 import com.potion.ISPotion.Classes.Potion;
+import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.StorageCell;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
+import com.potion.ISPotion.repo.UserRepository;
+import com.potion.ISPotion.utils.AuthUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 @Controller
 public class PotionController {
@@ -20,13 +24,36 @@ public class PotionController {
     private PotionRepository potionRepository;
     @Autowired
     private IngredientRepository ingredientRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
         return request.getRequestURI();
     }
+
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/potion/add")
-    public String potionDisplayAdd(Model model) {
+    public String potionDisplayAdd(@CurrentSecurityContext(expression="authentication")
+                                       Authentication authentication, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
+
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
         model.addAttribute("ingredients", ingredients );
         model.addAttribute("title", "Зелья");
@@ -35,14 +62,40 @@ public class PotionController {
 
 
     @GetMapping("/potion")
-    public String potion(Model model) {
+    public String potion(@CurrentSecurityContext(expression="authentication")
+                             Authentication authentication, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.POTIONS_MAKING_DEPT,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
         Iterable<Potion> potions = potionRepository.findAll();
         model.addAttribute("potions", potions );
         model.addAttribute("title", "Зелья");
         return "potion";
     }
     @GetMapping("/potion/edit/{id}")
-    public String potionEditDisplay(@PathVariable(value = "id") long id, Model model) {
+    public String potionEditDisplay(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication, @PathVariable(value = "id") long id, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
+
         if (!potionRepository.existsById(id)) {
             return "redirect:/potion";
         }
@@ -55,7 +108,21 @@ public class PotionController {
         return "potion-edit";
     }
     @PostMapping("/potion/edit/{id}")
-    public String potionEdit(@PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
+    public String potionEdit(@CurrentSecurityContext(expression="authentication")
+                                 Authentication authentication, @PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
+
         if (!potionRepository.existsById(id)) {
             return "redirect:/potion";
         }
@@ -78,7 +145,21 @@ public class PotionController {
     }
 
     @PostMapping("/potion/add")
-    public String potionAdd( HttpServletRequest request, Model model) {
+    public String potionAdd(@CurrentSecurityContext(expression="authentication")
+                                Authentication authentication, HttpServletRequest request, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
+
         String[] ingredientsIds = request.getParameterValues("ingredientsIds");
         String name = Arrays.toString(request.getParameterValues("name")).replace("[", "").replace("]", "");
 
@@ -93,7 +174,21 @@ public class PotionController {
         return "redirect:/potion";
     }
     @PostMapping("/potion/delete/{id}")
-    public String potionDelete(@PathVariable(value = "id") long id) {
+    public String potionDelete(@CurrentSecurityContext(expression="authentication")
+                                   Authentication authentication, @PathVariable(value = "id") long id) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.POTIONS_MAKING_DEPT
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+            return "redirect:/home";
+
         if (!potionRepository.existsById(id)) {
             return "redirect:/potion";
         }

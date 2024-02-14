@@ -1,20 +1,20 @@
 package com.potion.ISPotion.Controllers;
 
 import com.potion.ISPotion.Classes.*;
-import com.potion.ISPotion.repo.IngredientRepository;
-import com.potion.ISPotion.repo.PotionRepository;
-import com.potion.ISPotion.repo.StorageCellRepository;
-import com.potion.ISPotion.repo.StorageRecordRepository;
+import com.potion.ISPotion.repo.*;
+import com.potion.ISPotion.utils.AuthUtils;
 import com.potion.ISPotion.utils.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
 
 @Controller
@@ -29,14 +29,34 @@ public class StorageController {
     private StorageRecordRepository storageRecordRepository;
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private UserRepository userRepository;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/storage")
-    public String storage(Model model) {
+    public String storage(@CurrentSecurityContext(expression="authentication")
+                              Authentication authentication,Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         Iterable<StorageCell> cells = storageCellRepository.findAll();
         Iterable<StorageRecord> records = storageRecordRepository.findAll();
 
@@ -48,7 +68,19 @@ public class StorageController {
     }
 
     @GetMapping("/storage/add")
-    public String storageDisplayAdd(Model model) {
+    public String storageDisplayAdd(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication,Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         Iterable<Ingredient> ingredients = ingredientRepository.findAll();
         Iterable<Potion> potions = potionRepository.findAll();
 
@@ -60,7 +92,19 @@ public class StorageController {
     }
 
     @PostMapping("/storage/add")
-    public String storageCellPostAdd(@RequestParam String entity, @RequestParam String ingredientId, @RequestParam String potionId, @RequestParam String quantity, Model model) {
+    public String storageCellPostAdd(@CurrentSecurityContext(expression="authentication")
+                                         Authentication authentication,@RequestParam String entity, @RequestParam String ingredientId, @RequestParam String potionId, @RequestParam String quantity, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         try {
             StorageCell cell = new StorageCell();
             switch(entity) {
@@ -83,7 +127,19 @@ public class StorageController {
         return "redirect:/storage";
     }
     @GetMapping("/storage/edit/{id}")
-    public String storageCellEditDisplay(@PathVariable(value = "id") long id, Model model) {
+    public String storageCellEditDisplay(@CurrentSecurityContext(expression="authentication")
+                                             Authentication authentication,@PathVariable(value = "id") long id, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!storageCellRepository.existsById(id)) {
             return "redirect:/storage";
         }
@@ -99,7 +155,19 @@ public class StorageController {
         return "storage-cell-edit";
     }
     @PostMapping("/storage/edit/{id}")
-    public String storageCellEdit(@PathVariable(value = "id") long id, @RequestParam String quantity, Model model) {
+    public String storageCellEdit(@CurrentSecurityContext(expression="authentication")
+                                      Authentication authentication,@PathVariable(value = "id") long id, @RequestParam String quantity, Model model) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!storageCellRepository.existsById(id)) {
             return "redirect:/storage";
         }
@@ -110,7 +178,19 @@ public class StorageController {
     }
 
     @PostMapping("/storage/delete/{id}")
-    public String storageCellDelete(@PathVariable(value = "id") long id) {
+    public String storageCellDelete(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication,@PathVariable(value = "id") long id) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.EMPLOYEE,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!storageCellRepository.existsById(id)) {
             return "redirect:/storage";
         }
@@ -120,7 +200,18 @@ public class StorageController {
     }
 
     @PostMapping("/storage/record/restore/{id}")
-    public String recordDelete(@PathVariable(value = "id") long id) {
+    public String recordDelete(@CurrentSecurityContext(expression="authentication")
+                                   Authentication authentication,@PathVariable(value = "id") long id) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.HEAD,
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
         if (!storageRecordRepository.existsById(id)) {
             return "redirect:/storage";
         }

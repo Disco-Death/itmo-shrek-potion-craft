@@ -34,6 +34,12 @@ public class SaleController {
         return request.getRequestURI();
     }
 
+    @ModelAttribute("permissionsParts")
+    public Set<String> headerPermission(@CurrentSecurityContext(expression="authentication")
+                                        Authentication authentication) {
+        return AuthUtils.getHeaderPermissions(userRepository, authentication);
+    }
+
     @GetMapping("/sale")
     public String sale(@CurrentSecurityContext(expression="authentication")
                            Authentication authentication,
@@ -42,7 +48,8 @@ public class SaleController {
                 Role.SALES_DEPT,
                 Role.HEAD,
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -65,7 +72,8 @@ public class SaleController {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.SALES_DEPT,
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -86,7 +94,8 @@ public class SaleController {
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -116,7 +125,8 @@ public class SaleController {
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -149,7 +159,8 @@ public class SaleController {
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -184,7 +195,8 @@ public class SaleController {
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -240,7 +252,8 @@ public class SaleController {
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.EMPLOYEE
+                Role.EMPLOYEE,
+                Role.ADMIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,

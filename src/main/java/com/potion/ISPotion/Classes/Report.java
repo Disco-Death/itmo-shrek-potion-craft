@@ -1,8 +1,11 @@
 package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Entity
@@ -15,12 +18,24 @@ public class Report {
     private String  body;
     @Column(columnDefinition = "boolean default false")
     private boolean isSended;
-    private Date creationDate;
 
-    @PrePersist
-    protected void onCreate() {
-        creationDate = new Date();
+    @CreationTimestamp
+    private Instant dateAdd;
+
+    @CreationTimestamp
+    private Instant dateUpd;
+
+    public User getUser() {
+        return user;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public boolean isSended() {
         return isSended;
@@ -62,18 +77,35 @@ public class Report {
         this.body = body;
     }
 
+    public String getDateAdd() {
+        return dateAdd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
+    }
+
+    public void setDateAdd(Instant dateAdd) {
+        this.dateAdd = dateAdd;
+    }
+
+    public String getDateUpd() {
+        return dateUpd.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
+    }
+
+    public void setDateUpd(Instant dateUpd) {
+        this.dateUpd = dateUpd;
+    }
+
     public Report(){
 
     }
 
-    public  Report(String title, String subject, String body) {
+    public  Report(String title, String subject, String body, User user) {
         this.title = title;
         this.subject = subject;
         this.body = body;
         this.isSended = false;
+        this.user = user;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return Date.from(dateAdd);
     }
 }

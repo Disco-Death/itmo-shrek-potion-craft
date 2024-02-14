@@ -89,7 +89,7 @@ public class StatsComponent {
         stat.add(storageCellsStat);
 
         var reportsTimeSeries = new ArrayList<DataPoint>();
-        var reports = reportRepository.findAllByOrderByCreationDateAsc().stream().toList();
+        var reports = reportRepository.findAllByOrderByDateAddAsc().stream().toList();
         i = 1;
         count = 0;
         lastDate = new Date(0);
