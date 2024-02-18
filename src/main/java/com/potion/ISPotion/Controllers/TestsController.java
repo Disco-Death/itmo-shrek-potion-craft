@@ -66,7 +66,7 @@ public class TestsController {
 
         model.addAttribute("cells", cells );
         model.addAttribute("records", records );
-        model.addAttribute("title", "Tests");
+        model.addAttribute("title", "Тестирование");
 
         return "tests";
     }
@@ -98,7 +98,7 @@ public class TestsController {
         }
 
         model.addAttribute("cells", cells );
-        model.addAttribute("title", "Tests");
+        model.addAttribute("title", "Тестирование");
         return "redirect:/tests";
     }
 }

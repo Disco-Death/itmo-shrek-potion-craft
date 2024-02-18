@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header :: links">
+</head>
+<header th:insert="header :: header"></header>
+<body class="container mt-5 mb-5">
+    <div class="tab-container">
+        <ul class="nav nav-tabs nav-storage">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="history">История записей</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " aria-current="storage">Настройки</a>
+            </li>
+        </ul>
+        <div id="history" class="tab-storage">
+            <table  class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="row">#</th>
+                    <th>Имя пользователя</th>
+                    <th>Дата</th>
+                    <th>Ссылка на просмотр</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="el : ${files}">
+                    <th scope="row"></th>
+                    <td><span th:text="${el.toString().split('\\')[1].split('-')[0]}"></span></td>
+                    <td><span th:text="${el.toString().substring(el.toString().length-21, el.toString().length-5)}"></span></td>
+                    <td><video
+                            width="480"
+                            controls
+                    >
+                        <source
+                                th:src="${el.toString()}"
+                                type="video/webm" />
+                    </video></td>
+                    <td>
+                        <form th:action="'/track/delete/' + ${el.toString().split('\\')[1]}" onsubmit="return confirm('Вы уверены в удалении файла?');" method="post" class="col">
+                            <button  type="submit"  class="btn btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table >
+        </div>
+        <div id="storage" class="tab-storage" style="display:none;">
+            <table  class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="row">#</th>
+                        <th>Имя пользователя</th>
+                        <th>Статус слежки</th>
+                        <th>Длительность записи</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="el : ${users}">
+                        <th scope="row" th:text="${el.id}" th:value="${el.id}"></th>
+                        <td th:text="${el.username}"   th:value="${el.username}" ></td>
+                        <td><input type="checkbox" name="trackStatus" class="form-check-input trackStatus"  th:checked="${el.isTracking}" th:attr="data-id=${el.id}"></td>
+                        <td><input type="number" th:value="${el.recordDuration}" min="0" max="30" step="1" class="form-control trackLength" th:attr="data-id=${el.id}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table >
+            <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </div>
+    </div>
+</body>
+</html>

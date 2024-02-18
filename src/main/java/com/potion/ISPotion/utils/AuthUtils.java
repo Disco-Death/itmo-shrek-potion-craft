@@ -36,7 +36,7 @@ public final class AuthUtils {
         ArrayList<String> permissionsArray = new ArrayList<>();
 
         if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) ) {
-            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats"));
+            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats", "track"));
         }
         if (userRoles.contains(Role.TEST_DEPT)) {
             permissionsArray.addAll(Arrays.asList("storage","tests"));
