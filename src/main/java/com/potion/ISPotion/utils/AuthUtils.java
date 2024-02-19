@@ -32,29 +32,34 @@ public final class AuthUtils {
     }
 
     public static Set<String> getHeaderPermissions(UserRepository userRepository, Authentication authentication) {
+        if (authentication.getPrincipal() == "anonymousUser") {
+            ArrayList<String> permissionsArray = new ArrayList<>();
+            permissionsArray.add("Anonymously");
+            return new HashSet<>(permissionsArray);
+        }
         Set<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
         ArrayList<String> permissionsArray = new ArrayList<>();
 
         if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) ) {
-            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats", "track"));
+            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats","tasks"));
         }
         if (userRoles.contains(Role.TEST_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("storage","tests"));
+            permissionsArray.addAll(Arrays.asList("storage","tests","tasks"));
         }
         if (userRoles.contains(Role.HEAD)) {
-            permissionsArray.addAll(Arrays.asList("report"));
+            permissionsArray.addAll(Arrays.asList("report","tasks"));
         }
         if (userRoles.contains(Role.PICKING_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("ingredient"));
+            permissionsArray.addAll(Arrays.asList("ingredient","tasks"));
         }
         if (userRoles.contains(Role.POTIONS_MAKING_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("potion", "ingredient"));
+            permissionsArray.addAll(Arrays.asList("potion", "ingredient","tasks"));
         }
         if (userRoles.contains(Role.SALES_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("sale"));
+            permissionsArray.addAll(Arrays.asList("sale","tasks"));
         }
         if (anyAllowedRole(userRoles, new HashSet<>(Arrays.asList(Role.EMPLOYEE, Role.HEAD)))) {
-            permissionsArray.addAll(Arrays.asList("storage"));
+            permissionsArray.addAll(Arrays.asList("storage","tasks"));
         }
 
         HashSet<String> permissions = new HashSet<>(permissionsArray);

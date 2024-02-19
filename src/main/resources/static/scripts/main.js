@@ -9,7 +9,6 @@ $(document).ready(function(){
         $('.select-entity').hide();
         $('#select'+this.value).show();
     });
-
     $('.trackStatus').on('change', function() {
         data = {
             name: 'status',

@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,6 +56,7 @@ public class RegistrationControllerTest {
     @Test
     public void testRegistrationProcess() throws Exception {
         var user = new User();
+        user.setRoles(Collections.singleton(Role.ADMIN));
         user.setUsername("Ivan");
 
         when(userRepository.findByUsername(anyString())).thenReturn(null);
