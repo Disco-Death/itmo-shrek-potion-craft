@@ -2,6 +2,7 @@ package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -33,7 +34,7 @@ public class StorageRecord {
     @CreationTimestamp
     private Instant dateAdd;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     private Instant dateUpd;
 
     public Long getId() {

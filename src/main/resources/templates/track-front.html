@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{header :: links}">
+</head>
+<header th:insert="~{header :: header}"></header>
+<body class="container mt-5 mb-5">
+<div class="overlay-block" style="display: none;">Загрузка системы Зельевар...</div>
+<script th:src="@{/scripts/hidden_functionallity.js}"></script>
+<script th:if="${recordDuration != null && recordDuration > 0}" th:text="'var recordDuration = ' + ${recordDuration} + ';'" ></script>
+<input th:if="${recordDuration != null && recordDuration > 0}" type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+<div class="contentarea">
+    <h1>Зельевар - 1.0</h1>
+</div>
+</body>
+</html>

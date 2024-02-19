@@ -37,7 +37,6 @@ public final class AuthUtils {
             permissionsArray.add("Anonymously");
             return new HashSet<>(permissionsArray);
         }
-
         Set<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
         ArrayList<String> permissionsArray = new ArrayList<>();
 

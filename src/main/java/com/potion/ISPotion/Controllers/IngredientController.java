@@ -59,6 +59,7 @@ public class IngredientController {
                              Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
+                Role.EMPLOYEE,
                 Role.PICKING_DEPT,
                 Role.POTIONS_MAKING_DEPT,
                 Role.DIRECTOR,

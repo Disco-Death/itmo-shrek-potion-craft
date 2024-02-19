@@ -10,6 +10,7 @@
     <a th:if="${permissionsParts != null && permissionsParts.contains('tests')}" th:classappend="${requestURI.contains('/tests')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tests">Тестирование</a>
     <a th:if="${permissionsParts != null && permissionsParts.contains('users')}" th:classappend="${requestURI.contains('/users')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/users">Пользователи</a>
     <a th:if="${permissionsParts != null && permissionsParts.contains('stats')}" th:classappend="${requestURI.contains('/stats')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/stats">Статистика</a>
+    <a th:if="${permissionsParts != null && permissionsParts.contains('track')}" th:classappend="${requestURI.contains('/track')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/track">Слежка</a>
     <a th:if="${permissionsParts != null && permissionsParts.contains('tasks')}" th:classappend="${requestURI.contains('/tasks')} ? 'active':''" class="flex-sm-fill text-sm-center nav-link" href="/tasks">Задачи</a>
     <a class="flex-sm-fill text-sm-center nav-link last" href="/logout"><form th:action="@{/logout}" method="post">
       <input class="btn btn-out btn-block" type="submit" value="Выйти"/>

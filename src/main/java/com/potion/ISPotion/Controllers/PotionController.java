@@ -66,6 +66,7 @@ public class PotionController {
                              Authentication authentication, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
+                Role.EMPLOYEE,
                 Role.POTIONS_MAKING_DEPT,
                 Role.DIRECTOR,
                 Role.ADMIN

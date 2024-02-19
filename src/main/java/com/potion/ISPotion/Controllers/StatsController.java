@@ -42,6 +42,7 @@ public class StatsController {
                        Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN

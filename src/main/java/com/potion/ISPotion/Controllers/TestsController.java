@@ -50,14 +50,15 @@ public class TestsController {
                                    Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN,
+                Role.ADMIN
+        ));
+        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.TEST_DEPT,
-                Role.MERLIN
+                Role.TEST_DEPT
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
             return "redirect:/home";
 
         Iterable<StorageCell> cells = storageCellRepository.findAll();
@@ -65,7 +66,7 @@ public class TestsController {
 
         model.addAttribute("cells", cells );
         model.addAttribute("records", records );
-        model.addAttribute("title", "Tests");
+        model.addAttribute("title", "Тестирование");
 
         return "tests";
     }
@@ -97,7 +98,7 @@ public class TestsController {
         }
 
         model.addAttribute("cells", cells );
-        model.addAttribute("title", "Tests");
+        model.addAttribute("title", "Тестирование");
         return "redirect:/tests";
     }
 }

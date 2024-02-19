@@ -49,6 +49,7 @@ public class SaleController {
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
+                Role.EMPLOYEE,
                 Role.MERLIN
         ));
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -70,7 +71,8 @@ public class SaleController {
                               Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN,
+                Role.EMPLOYEE,
+                Role.ADMIN
                 Role.SALES_DEPT,
                 Role.HEAD,
                 Role.MERLIN
@@ -94,6 +96,7 @@ public class SaleController {
                                  Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -123,6 +126,7 @@ public class SaleController {
                           Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
@@ -155,6 +159,7 @@ public class SaleController {
                                   Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -188,6 +193,7 @@ public class SaleController {
                            Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN
@@ -242,6 +248,7 @@ public class SaleController {
                              @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
+                Role.EMPLOYEE,
                 Role.ADMIN,
                 Role.HEAD,
                 Role.MERLIN

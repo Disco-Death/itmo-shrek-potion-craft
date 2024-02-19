@@ -1,6 +1,7 @@
 package com.potion.ISPotion.Classes;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.Set;
@@ -18,7 +19,27 @@ public class User {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+    @CreationTimestamp
     private Date creationDate;
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public void setTracking(boolean tracking) {
+        isTracking = tracking;
+    }
+
+    public int getRecordDuration() {
+        return recordDuration;
+    }
+
+    public void setRecordDuration(int recordDuration) {
+        this.recordDuration = recordDuration;
+    }
+
+    private boolean isTracking;
+    private int recordDuration;
 
     @PrePersist
     protected void onCreate() {

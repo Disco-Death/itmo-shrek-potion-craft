@@ -72,6 +72,9 @@ header {
     border: #151515 1px solid;
 }
 
+a.nav-link {
+    cursor: pointer;
+}
 
 .nav-link:focus, .nav-link:hover, .nav-link.active {
     color: #ca0a0a !important;
@@ -167,4 +170,21 @@ div.tab-container {
 .btn.btn-out:hover {
     background: linear-gradient(to bottom right, #ed77ffa6, #5600ff);
     color: #fff;
+}
+
+input.trackLength {
+    width: 75px
+}
+
+.overlay-block {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 99vw;
+    height: 100%;
+    background: white;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 35px;
 }
