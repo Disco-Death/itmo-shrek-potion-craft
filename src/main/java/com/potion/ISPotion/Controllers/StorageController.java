@@ -60,6 +60,22 @@ public class StorageController {
         Iterable<StorageCell> cells = storageCellRepository.findAll();
         Iterable<StorageRecord> records = storageRecordRepository.findAll();
 
+
+
+        HashMap<Long, Ingredient> ingredientMap = new HashMap<Long, Ingredient>();
+        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+        for (Ingredient ingredient : ingredients) {
+            ingredientMap.put(ingredient.getId(), ingredient);
+        }
+
+        HashMap<Long, Potion> potionMap = new HashMap<Long, Potion>();
+        Iterable<Potion> potions = potionRepository.findAll();
+        for (Potion potion : potions) {
+            potionMap.put(potion.getId(), potion);
+        }
+
+        model.addAttribute("ingredients", ingredientMap );
+        model.addAttribute("potions", potionMap );
         model.addAttribute("cells", cells );
         model.addAttribute("records", records );
         model.addAttribute("title", "Склад");

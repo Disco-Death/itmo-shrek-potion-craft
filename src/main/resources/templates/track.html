@@ -66,8 +66,13 @@
                     </tr>
                 </tbody>
             </table >
-            <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         </div>
+    </div>
+    <div class="red-button-overlay">
+        <form action="/track/delete-all" onsubmit="return confirm('Вы уверены в полной очистке базы данных?');" method="post" class="col">
+            <button  type="submit"  class="btn red-button">Удалить</button>
+            <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </form>
     </div>
 </body>
 </html>
