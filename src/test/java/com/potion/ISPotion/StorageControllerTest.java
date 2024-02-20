@@ -4,6 +4,7 @@ import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.StorageController;
 import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.StorageService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.in;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -56,12 +59,14 @@ public class StorageControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.EMPLOYEE);
+        userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
         StorageCell cell1 = new StorageCell();
         cell1.setEntity(StorageEntity.Potion);
+        cell1.setEntityId(1L);
         StorageCell cell2 = new StorageCell();
+        cell2.setEntityId(1L);
         cell2.setEntity(StorageEntity.Ingredient);
 
         StorageRecord record1 = new StorageRecord();
@@ -73,9 +78,23 @@ public class StorageControllerTest {
         record2.setDateAdd(Instant.EPOCH);
         record2.setDateUpd(Instant.EPOCH);
 
+        var potions = new ArrayList<Potion>();
+        var potion = new Potion();
+        potion.setId(1L);
+        potion.setName("Potion test name");
+        potions.add(potion);
+
+        var ingredients = new ArrayList<Ingredient>();
+        var ingredient = new Ingredient();
+        ingredient.setId(1L);
+        ingredient.setName("Ingredient test name");
+        ingredients.add(ingredient);
+
         when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(storageCellRepository.findAll()).thenReturn(Arrays.asList(cell1, cell2));
         when(storageRecordRepository.findAll()).thenReturn(Arrays.asList(record1, record2));
+        when(potionRepository.findAll()).thenReturn(potions);
+        when(ingredientRepository.findAll()).thenReturn(ingredients);
 
         mockMvc.perform(get("/storage")
                         .with(user(user.getUsername()).roles(user.getRoles().toString())))

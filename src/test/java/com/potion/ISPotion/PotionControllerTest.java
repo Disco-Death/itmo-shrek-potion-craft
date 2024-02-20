@@ -4,6 +4,7 @@ import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.PotionController;
 import com.potion.ISPotion.repo.IngredientRepository;
 import com.potion.ISPotion.repo.PotionRepository;
+import com.potion.ISPotion.repo.StorageCellRepository;
 import com.potion.ISPotion.repo.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,6 +40,8 @@ public class PotionControllerTest {
     private IngredientRepository ingredientRepository;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private StorageCellRepository storageCellRepository;
 
     @Test
     public void testPotionWithAllowedRole() throws Exception {
@@ -74,7 +77,6 @@ public class PotionControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.EMPLOYEE);
         user.setRoles(userRoles);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);

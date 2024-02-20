@@ -50,15 +50,13 @@ public class TestsController {
                                    Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
-        ));
-        Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
+                Role.ADMIN,
                 Role.HEAD,
                 Role.TEST_DEPT
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
-        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles) || userRoles.containsAll(allowedCombineRole))
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
 
         Iterable<StorageCell> cells = storageCellRepository.findAll();

@@ -6,7 +6,10 @@ import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.Controllers.IngredientController;
 import com.potion.ISPotion.repo.IngredientRepository;
+import com.potion.ISPotion.repo.PotionRepository;
+import com.potion.ISPotion.repo.StorageCellRepository;
 import com.potion.ISPotion.repo.UserRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +17,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -40,6 +39,10 @@ public class IngredientControllerTest {
     private IngredientRepository ingredientRepository;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private PotionRepository potionRepository;
+    @MockBean
+    private StorageCellRepository storageCellRepository;
 
     @Test
     public void testIngredientWithAllowedRole() throws Exception {
@@ -68,7 +71,6 @@ public class IngredientControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.EMPLOYEE);
         user.setRoles(userRoles);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
@@ -157,8 +159,13 @@ public class IngredientControllerTest {
         userRoles.add(Role.DIRECTOR);
         user.setRoles(userRoles);
 
+        var ingredient = new Ingredient();
+        var potions = new HashSet<Potion>();
+
         when(userRepository.findByUsername(anyString())).thenReturn(user);
         when(ingredientRepository.existsById(anyLong())).thenReturn(true);
+        when(ingredientRepository.findById(anyLong())).thenReturn(Optional.of(ingredient));
+        when(potionRepository.findAllByIngredients(any())).thenReturn(potions);
 
         mockMvc.perform(post("/ingredient/delete/1")
                         .with(user(user.getUsername()).roles(user.getRoles().toString()))

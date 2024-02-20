@@ -59,7 +59,6 @@ public class StatsControllerTest {
         var user = new User();
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.EMPLOYEE);
         user.setRoles(userRoles);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);

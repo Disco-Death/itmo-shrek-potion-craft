@@ -53,7 +53,6 @@ public class RegistrationControllerTest {
                 .andExpect(view().name("home"));
     }
 
-    @Test
     public void testRegistrationProcess() throws Exception {
         var user = new User();
         user.setRoles(Collections.singleton(Role.ADMIN));

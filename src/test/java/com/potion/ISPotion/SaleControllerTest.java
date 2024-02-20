@@ -73,7 +73,6 @@ public class SaleControllerTest {
         User user = new User(); // Создание пользователя
         user.setUsername("Test username");
         var userRoles = new HashSet<Role>();
-        userRoles.add(Role.EMPLOYEE);
         user.setRoles(userRoles); // Установка роли пользователя
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
