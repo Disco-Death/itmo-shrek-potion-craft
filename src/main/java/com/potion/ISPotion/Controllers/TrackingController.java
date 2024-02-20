@@ -4,8 +4,10 @@ import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.StorageCell;
 import com.potion.ISPotion.Classes.StorageRecord;
 import com.potion.ISPotion.Classes.User;
-import com.potion.ISPotion.repo.UserRepository;
+import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.AuthUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,21 @@ import java.util.*;
 public class TrackingController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private IngredientRepository ingredientRepository;
+    @Autowired
+    private PotionRepository potionRepository;
+    @Autowired
+    private ReportRepository reportRepository;
+    @Autowired
+    private SaleRepository saleRepository;
+    @Autowired
+    private StorageRecordRepository storageRecordRepository;
+    @Autowired
+    private StorageCellRepository storageCellRepository;
+    @Autowired
+    private TaskRepository taskRepository;
+
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
@@ -123,5 +140,29 @@ public class TrackingController {
         File file = new File("video" + File.separator + filename);
         file.delete();
         return "redirect:/track";
+    }
+
+    @PostMapping("/track/delete-all")
+    public String deleteAll(@CurrentSecurityContext(expression="authentication")
+                               Authentication authentication) {
+        Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
+                Role.DIRECTOR,
+                Role.ADMIN
+        ));
+
+        Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
+        if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
+            return "redirect:/home";
+
+        saleRepository.deleteAll();
+        potionRepository.deleteAll();
+        ingredientRepository.deleteAll();
+        storageRecordRepository.deleteAll();
+        storageCellRepository.deleteAll();
+        reportRepository.deleteAll();
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
+
+        return "redirect:/logout";
     }
 }

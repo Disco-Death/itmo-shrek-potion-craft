@@ -4,9 +4,7 @@ import com.potion.ISPotion.Classes.Ingredient;
 import com.potion.ISPotion.Classes.Potion;
 import com.potion.ISPotion.Classes.Role;
 import com.potion.ISPotion.Classes.StorageCell;
-import com.potion.ISPotion.repo.IngredientRepository;
-import com.potion.ISPotion.repo.PotionRepository;
-import com.potion.ISPotion.repo.UserRepository;
+import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.AuthUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +24,8 @@ public class PotionController {
     private IngredientRepository ingredientRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StorageCellRepository storageCellRepository;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
@@ -76,6 +76,22 @@ public class PotionController {
         if (!AuthUtils.anyAllowedRole(userRoles, allowedRoles))
             return "redirect:/home";
         Iterable<Potion> potions = potionRepository.findAll();
+
+        ArrayList<Long> notDeleteableIds = new ArrayList<>();
+        for (Potion pot: potions
+        ) {
+            Set<StorageCell> storagedPotions = storageCellRepository.findAllByEntityId(pot.getId());
+            if(!storagedPotions.isEmpty()) {
+                notDeleteableIds.add(pot.getId());
+            }
+        }
+
+        if(!notDeleteableIds.isEmpty()) {
+            String errorMessage = "Вы не можете удалить этот объект, потому что существуют взаимосвязи с другими сущностями";
+            model.addAttribute("errorMessage", errorMessage);
+        }
+
+        model.addAttribute("notDeleteableIds", notDeleteableIds);
         model.addAttribute("potions", potions );
         model.addAttribute("title", "Зелья");
         return "potion";

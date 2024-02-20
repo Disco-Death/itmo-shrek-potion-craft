@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +58,22 @@ public class StorageController {
         Iterable<StorageCell> cells = storageCellRepository.findAll();
         Iterable<StorageRecord> records = storageRecordRepository.findAll();
 
+
+
+        HashMap<Long, Ingredient> ingredientMap = new HashMap<Long, Ingredient>();
+        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+        for (Ingredient ingredient : ingredients) {
+            ingredientMap.put(ingredient.getId(), ingredient);
+        }
+
+        HashMap<Long, Potion> potionMap = new HashMap<Long, Potion>();
+        Iterable<Potion> potions = potionRepository.findAll();
+        for (Potion potion : potions) {
+            potionMap.put(potion.getId(), potion);
+        }
+
+        model.addAttribute("ingredients", ingredientMap );
+        model.addAttribute("potions", potionMap );
         model.addAttribute("cells", cells );
         model.addAttribute("records", records );
         model.addAttribute("title", "Склад");
@@ -110,12 +124,12 @@ public class StorageController {
             switch(entity) {
                 case ("Ingredient"):
                     cell.setEntity(StorageEntity.Ingredient);
-                    cell.setEntity_id(Long.parseLong(ingredientId));
+                    cell.setEntityId(Long.parseLong(ingredientId));
                     cell.setQuantity(Long.parseLong(quantity));
                     break;
                 case ("Potion"):
                     cell.setEntity(StorageEntity.Potion);
-                    cell.setEntity_id(Long.parseLong(potionId));
+                    cell.setEntityId(Long.parseLong(potionId));
                     cell.setQuantity(Long.parseLong(quantity));
                     break;
                 default:

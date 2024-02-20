@@ -22,7 +22,7 @@ public final class AuthUtils {
 
     public static Set<Role> getRolesByAuthentication(UserRepository userRepository, Authentication authentication) {
         User user = getUserByAuthentication(userRepository, authentication);
-        return user.getRoles();
+        return user != null ? user.getRoles() : new HashSet<Role>();
     }
 
     public static boolean allAllowedRole(Collection<Role> userRoles, Collection<Role> validRoles) {
@@ -41,7 +41,7 @@ public final class AuthUtils {
         ArrayList<String> permissionsArray = new ArrayList<>();
 
         if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) ) {
-            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats","tasks"));
+            permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats","tasks","track"));
         }
         if (userRoles.contains(Role.TEST_DEPT)) {
             permissionsArray.addAll(Arrays.asList("storage","tests","tasks"));

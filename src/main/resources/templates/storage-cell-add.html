@@ -10,7 +10,7 @@
         <select id="selectEntity" name="entity" class="form-control border mt-2 mb-2">
             <option th:each="entity : ${entities}"
                     th:value="${{entity}}"
-                    th:text="${entity}">
+                    th:text="${entity.toString()}">
             </option>
         </select>
         <select id="selectIngredient" name="ingredientId" class="form-control select-entity border mt-2 mb-2">
@@ -27,7 +27,7 @@
         </select>
         <input type="text" name="quantity" placeholder="Введите кол-во" class="form-control border mt-2 mb-2">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-success">Добавить ингредиент</button>
+        <button type="submit" class="btn btn-success">Добавить ячейку</button>
     </form>
 </div>
 </body>

@@ -128,7 +128,7 @@ public class StorageService {
         var potionsIds = new HashSet<Long>();
 
         for (var potionStorageCell: potionStorageCells) {
-            potionsIds.add(potionStorageCell.getEntity_id());
+            potionsIds.add(potionStorageCell.getEntityId());
         }
 
         return potionsIds;
@@ -137,7 +137,7 @@ public class StorageService {
     public Iterable<StorageCell> getAllStorageCellsByEntityIdForSale(Long entityId) {
         Set<StorageCell> storageCells = getAllStorageCellsForSale();
 
-        return storageCells.stream().filter(s -> s.getEntity_id().equals(entityId)).toList();
+        return storageCells.stream().filter(s -> s.getEntityId().equals(entityId)).toList();
     }
 
     public long sumPotionsQuantityInStorageForSaleByPotionId(long potionId) {

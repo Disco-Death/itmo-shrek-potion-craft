@@ -72,7 +72,7 @@ public class SaleController {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
                 Role.EMPLOYEE,
-                Role.ADMIN
+                Role.ADMIN,
                 Role.SALES_DEPT,
                 Role.HEAD,
                 Role.MERLIN

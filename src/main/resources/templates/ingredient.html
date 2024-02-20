@@ -3,6 +3,10 @@
 <head th:insert="header :: links">
 </head>
 <header th:insert="header :: header"></header>
+<script th:if="${errorMessage != null}">
+    var errorMessage = '[[${errorMessage}]]';
+</script>
+</script>
 <body class="container mt-5 mb-5">
     <div class="tab-container">
         <table  class="table table-striped table-hover">
@@ -24,7 +28,8 @@
                 <td><a th:href="'/ingredient/edit/' + ${el.id}" class="btn btn-warning">Редактировать</a></td>
                 <td>
                     <form th:action="'/ingredient/delete/' + ${el.id}" class="col" method="post">
-                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        <button th:if="${!notDeleteableIds.contains(el.id)}" type="submit" class="btn btn-danger">Удалить</button>
+                        <button th:if="${notDeleteableIds.contains(el.id)}" class="btn btn-danger btn-disabled">Удалить</button>
                     </form>
                 </td>
             </tr>
