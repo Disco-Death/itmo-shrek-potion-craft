@@ -10,7 +10,7 @@
       <select name="entity" class="form-control border mt-2 mb-2">
         <option th:each="entity : ${entities}"
                 th:value="${{entity}}"
-                th:text="${entity}"
+                th:text="${entity.toString()}"
                 th:selected="${entity==currentCell.entity}"
                 th:disabled="${entity!=currentCell.entity}"
         >
@@ -20,8 +20,8 @@
         <option th:each="ingredient : ${ingredients}"
                 th:value="${{ingredient.id}}"
                 th:text="${ingredient.name}"
-                th:selected="${ingredient.id==currentCell.entity_id}"
-                th:disabled="${ingredient.id!=currentCell.entity_id}"
+                th:selected="${ingredient.id==currentCell.entityId}"
+                th:disabled="${ingredient.id!=currentCell.entityId}"
         >
         </option>
       </select>
@@ -29,8 +29,8 @@
         <option th:each="potion : ${potions}"
                 th:value="${{potion.id}}"
                 th:text="${potion.name}"
-                th:selected="${potion.id==currentCell.entity_id}"
-                th:disabled="${potion.id!=currentCell.entity_id}"
+                th:selected="${potion.id==currentCell.entityId}"
+                th:disabled="${potion.id!=currentCell.entityId}"
         >
         </option>
       </select>

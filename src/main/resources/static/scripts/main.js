@@ -1,4 +1,10 @@
 $(document).ready(function(){
+    $( ".btn-disabled" ).click(function(event) {
+        event.preventDefault();
+        if (typeof errorMessage !== "undefined") {
+           alert(errorMessage);
+        }
+    });
     $( ".nav-storage .nav-link" ).click(function() {
     $( ".nav-storage .nav-link" ).removeClass('active');
         $('.tab-storage').hide();

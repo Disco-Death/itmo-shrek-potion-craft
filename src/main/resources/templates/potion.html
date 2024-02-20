@@ -4,6 +4,9 @@
 </head>
 <header th:insert="header :: header"></header>
 <body class="container mt-5 mb-5">
+<script th:if="${errorMessage != null}">
+    var errorMessage = '[[${errorMessage}]]';
+</script>
 <div class="tab-container">
     <table  class="table table-striped table-hover">
         <thead>
@@ -23,13 +26,14 @@
             <td><a th:href="'/potion/edit/' + ${el.id}" class="btn btn-warning">Редактировать</a></td>
             <td>
                 <form th:action="'/potion/delete/' + ${el.id}" class="col" method="post">
-                    <button type="submit" class="btn btn-danger">Удалить</button>
+                    <button th:if="${!notDeleteableIds.contains(el.id)}" type="submit" class="btn btn-danger">Удалить</button>
+                    <button th:if="${notDeleteableIds.contains(el.id)}" class="btn btn-danger btn-disabled">Удалить</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table >
-    <div class="col"><a href="potion/add" class="btn btn-success">Добавить ингредиент</a></div>
+    <div class="col"><a href="potion/add" class="btn btn-success">Добавить зелье</a></div>
 </div>
 </body>
 </html>

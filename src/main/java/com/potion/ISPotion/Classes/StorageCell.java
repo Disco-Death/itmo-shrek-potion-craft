@@ -13,7 +13,7 @@ public class StorageCell {
     @Column(name = "entity")
     @Enumerated(EnumType.STRING)
     private StorageEntity entity;
-    private Long entity_id;
+    private Long entityId;
 
     private Long quantity;
     private Date creationDate;
@@ -49,12 +49,12 @@ public class StorageCell {
         this.entity = entity;
     }
 
-    public Long getEntity_id() {
-        return entity_id;
+    public Long getEntityId() {
+        return entityId;
     }
 
-    public void setEntity_id(Long entity_id) {
-        this.entity_id = entity_id;
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 
     public Long getQuantity() {
@@ -67,9 +67,9 @@ public class StorageCell {
 
     public StorageCell() {
     }
-    public StorageCell(StorageEntity entity, long entity_id, long quantity) {
+    public StorageCell(StorageEntity entity, long entityId, long quantity) {
         this.entity = entity;
-        this.entity_id = entity_id;
+        this.entityId = entityId;
         this.quantity = quantity;
     }
 

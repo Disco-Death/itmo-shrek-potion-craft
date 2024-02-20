@@ -4,7 +4,6 @@ import com.potion.ISPotion.Classes.*;
 import com.potion.ISPotion.Controllers.StorageController;
 import com.potion.ISPotion.repo.*;
 import com.potion.ISPotion.utils.StorageService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,14 +96,14 @@ public class StorageControllerTest {
 
         var storageCell = new StorageCell();
         storageCell.setEntity(StorageEntity.Ingredient);
-        storageCell.setEntity_id(1L);
+        storageCell.setEntityId(1L);
         storageCell.setQuantity(100L);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         mockMvc.perform(post("/storage/add")
                         .param("entity", "Ingredient")
-                        .param("ingredientId", storageCell.getEntity_id().toString())
+                        .param("ingredientId", storageCell.getEntityId().toString())
                         .param("potionId", "")
                         .param("quantity", storageCell.getQuantity().toString())
                         .with(user(user.getUsername()).roles(user.getRoles().toString()))
@@ -119,7 +118,7 @@ public class StorageControllerTest {
         var capturedStorageCell = storageCellCaptor.getValue();
         assertEquals(storageCell.getQuantity(), capturedStorageCell.getQuantity());
         assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
-        assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
+        assertEquals(storageCell.getEntityId(), capturedStorageCell.getEntityId());
         assertEquals(0, capturedStorageCell.getTestApproved());
     }
 
@@ -133,14 +132,14 @@ public class StorageControllerTest {
 
         var storageCell = new StorageCell();
         storageCell.setEntity(StorageEntity.Potion);
-        storageCell.setEntity_id(1L);
+        storageCell.setEntityId(1L);
         storageCell.setQuantity(100L);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         mockMvc.perform(post("/storage/add")
                         .param("entity", "Potion")
-                        .param("potionId", storageCell.getEntity_id().toString())
+                        .param("potionId", storageCell.getEntityId().toString())
                         .param("ingredientId", "")
                         .param("quantity", storageCell.getQuantity().toString())
                         .with(user(user.getUsername()).roles(user.getRoles().toString()))
@@ -155,7 +154,7 @@ public class StorageControllerTest {
         var capturedStorageCell = storageCellCaptor.getValue();
         assertEquals(storageCell.getQuantity(), capturedStorageCell.getQuantity());
         assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
-        assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
+        assertEquals(storageCell.getEntityId(), capturedStorageCell.getEntityId());
         assertEquals(0, capturedStorageCell.getTestApproved());
     }
 
@@ -205,7 +204,7 @@ public class StorageControllerTest {
         storageCell.setId(1L);
         storageCell.setEntity(StorageEntity.Potion);
         storageCell.setQuantity(100L);
-        storageCell.setEntity_id(2L);
+        storageCell.setEntityId(2L);
         storageCell.setTestApproved(1);
 
         when(userRepository.findByUsername(anyString())).thenReturn(user);
@@ -225,7 +224,7 @@ public class StorageControllerTest {
         var capturedStorageCell = storageCellCaptor.getValue();
         assertEquals(storageCell.getId(), capturedStorageCell.getId());
         assertEquals(storageCell.getQuantity(), capturedStorageCell.getQuantity());
-        assertEquals(storageCell.getEntity_id(), capturedStorageCell.getEntity_id());
+        assertEquals(storageCell.getEntityId(), capturedStorageCell.getEntityId());
         assertEquals(storageCell.getEntity(), capturedStorageCell.getEntity());
         assertEquals(storageCell.getTestApproved(), capturedStorageCell.getTestApproved());
     }

@@ -29,9 +29,9 @@
                 <tbody>
                     <tr th:each="el : ${cells}">
                         <th scope="row" th:text="${el.id}" th:value="${el.id}"></th>
-                        <td th:text="${el.entity}"   th:value="${el.entity}" ></td>
-                        <td th:if="${el.entity.name() == 'Potion'}" th:text="${potions.get(el.entity_id).getName()}"></td>
-                        <td th:if="${el.entity.name() == 'Ingredient'}" th:text="${ingredients.get(el.entity_id).getName()}"></td>
+                        <td th:text="${el.entity.toString()}"   th:value="${el.entity}" ></td>
+                        <td th:if="${el.entity.name() == 'Potion'}" th:text="${potions.get(el.entityId).getName()}"></td>
+                        <td th:if="${el.entity.name() == 'Ingredient'}" th:text="${ingredients.get(el.entityId).getName()}"></td>
                         <td th:text="${el.quantity}"  th:value="${el.quantity}" ></td>
                         <td th:if="${el.entity.name() == 'Potion'}" th:text="${el.testApproved}? 'Пройден' : 'Не пройден'"   th:value="${el.testApproved}" ></td>
                         <td th:if="${el.entity.name() == 'Ingredient'}"></td>

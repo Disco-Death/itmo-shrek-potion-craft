@@ -10,4 +10,6 @@ import java.util.Set;
 public interface StorageCellRepository extends CrudRepository<StorageCell, Long> {
     Set<StorageCell> findAllByEntityAndTestApproved(StorageEntity entity, int testApproved);
     Set<StorageCell> findAllByOrderByCreationDateAsc();
+
+    Set<StorageCell> findAllByEntityId(Long entityId);
 }

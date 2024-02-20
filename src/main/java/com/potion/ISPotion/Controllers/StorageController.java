@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -126,12 +124,12 @@ public class StorageController {
             switch(entity) {
                 case ("Ingredient"):
                     cell.setEntity(StorageEntity.Ingredient);
-                    cell.setEntity_id(Long.parseLong(ingredientId));
+                    cell.setEntityId(Long.parseLong(ingredientId));
                     cell.setQuantity(Long.parseLong(quantity));
                     break;
                 case ("Potion"):
                     cell.setEntity(StorageEntity.Potion);
-                    cell.setEntity_id(Long.parseLong(potionId));
+                    cell.setEntityId(Long.parseLong(potionId));
                     cell.setQuantity(Long.parseLong(quantity));
                     break;
                 default:
