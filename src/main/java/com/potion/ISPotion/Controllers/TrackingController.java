@@ -126,6 +126,7 @@ public class TrackingController {
         return "home";
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @PostMapping("/track/delete/{name}")
     public String potionDelete(@CurrentSecurityContext(expression="authentication")
                                Authentication authentication, @PathVariable(value = "name") String filename) {

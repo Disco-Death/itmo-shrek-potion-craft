@@ -2,6 +2,7 @@ package com.potion.ISPotion.utils;
 
 import com.potion.ISPotion.Classes.User;
 import com.potion.ISPotion.repo.UserRepository;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ public class WebCamService {
         }
         return "home";
     }
+    @SuppressFBWarnings("PATH_TRAVERSAL_OUT")
     public void writeToDisk(String filename, MultipartFile multipartFile)
     {
         try

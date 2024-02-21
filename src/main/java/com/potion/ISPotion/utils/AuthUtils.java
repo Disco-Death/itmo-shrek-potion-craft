@@ -40,23 +40,23 @@ public final class AuthUtils {
         Set<Role> userRoles = getRolesByAuthentication(userRepository, authentication);
         ArrayList<String> permissionsArray = new ArrayList<>();
 
-        if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) ) {
+        if (userRoles.contains(Role.ADMIN) || userRoles.contains(Role.DIRECTOR) || userRoles.contains(Role.MERLIN)) {
             permissionsArray.addAll(Arrays.asList("ingredient","potion","report","sale","storage","tests","users","stats","tasks","track"));
         }
         if (userRoles.contains(Role.TEST_DEPT)) {
             permissionsArray.addAll(Arrays.asList("storage","tests","tasks"));
         }
         if (userRoles.contains(Role.HEAD)) {
-            permissionsArray.addAll(Arrays.asList("report","tasks"));
+            permissionsArray.addAll(Arrays.asList("storage","report","tasks"));
         }
         if (userRoles.contains(Role.PICKING_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("ingredient","tasks"));
+            permissionsArray.addAll(Arrays.asList("storage","ingredient","tasks"));
         }
         if (userRoles.contains(Role.POTIONS_MAKING_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("potion", "ingredient","tasks"));
+            permissionsArray.addAll(Arrays.asList("storage","potion", "ingredient","tasks"));
         }
         if (userRoles.contains(Role.SALES_DEPT)) {
-            permissionsArray.addAll(Arrays.asList("sale","tasks"));
+            permissionsArray.addAll(Arrays.asList("storage","sale","tasks"));
         }
         if (anyAllowedRole(userRoles, new HashSet<>(Arrays.asList(Role.EMPLOYEE, Role.HEAD)))) {
             permissionsArray.addAll(Arrays.asList("storage","tasks"));
