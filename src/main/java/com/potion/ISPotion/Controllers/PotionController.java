@@ -43,7 +43,8 @@ public class PotionController {
                                        Authentication authentication, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -69,7 +70,8 @@ public class PotionController {
                 Role.EMPLOYEE,
                 Role.POTIONS_MAKING_DEPT,
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -101,7 +103,8 @@ public class PotionController {
                                         Authentication authentication, @PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -128,7 +131,8 @@ public class PotionController {
                                  Authentication authentication, @PathVariable(value = "id") long id, HttpServletRequest request, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -165,7 +169,8 @@ public class PotionController {
                                 Authentication authentication, HttpServletRequest request, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -194,7 +199,8 @@ public class PotionController {
                                    Authentication authentication, @PathVariable(value = "id") long id) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,

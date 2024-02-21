@@ -43,7 +43,8 @@ public class IngredientController {
                                            Authentication authentication,Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -64,11 +65,11 @@ public class IngredientController {
                              Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.HEAD,
-                Role.EMPLOYEE,
                 Role.PICKING_DEPT,
                 Role.POTIONS_MAKING_DEPT,
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
 
         Collection<Role> userRoles = AuthUtils.getRolesByAuthentication(userRepository, authentication);
@@ -101,7 +102,8 @@ public class IngredientController {
                                             Authentication authentication, @PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -126,7 +128,8 @@ public class IngredientController {
                                      Authentication authentication, @PathVariable(value = "id") long id, @RequestParam String name, @RequestParam String property, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -151,7 +154,8 @@ public class IngredientController {
                                     Authentication authentication, @RequestParam String name, @RequestParam String property, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
@@ -170,7 +174,8 @@ public class IngredientController {
                                        Authentication authentication, @PathVariable(value = "id") long id, Model model) {
         Collection<Role> allowedRoles = new HashSet<>(Arrays.asList(
                 Role.DIRECTOR,
-                Role.ADMIN
+                Role.ADMIN,
+                Role.MERLIN
         ));
         Collection<Role> allowedCombineRole = new HashSet<>(Arrays.asList(
                 Role.HEAD,
